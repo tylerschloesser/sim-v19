@@ -33,6 +33,8 @@ async function main() {
   const camera$ = new BehaviorSubject<Vec2>(
     new Vec2(0.5, 0.5),
   )
+  let velocity: Vec2 | null = null
+
   const viewport$ = new BehaviorSubject<Vec2>(
     new Vec2(window.innerWidth, window.innerHeight),
   )
@@ -57,8 +59,24 @@ async function main() {
   let callback: FrameRequestCallback = () => {
     const t = self.performance.now()
 
-    // @ts-expect-error
-    const dt = t - lastFrame
+    const dt = (t - lastFrame) / 1000
+
+    if (velocity) {
+      const len = velocity.length()
+      invariant(len > 0)
+
+      const acceleration = velocity
+        .normalize()
+        .mul((1 + len) ** (1 / 2) - 1)
+        .mul(-1)
+
+      velocity = velocity.add(acceleration.mul(dt))
+      if (velocity.length() < 0.01) {
+        velocity = null
+      } else {
+        camera$.next(camera$.value.add(velocity.mul(dt)))
+      }
+    }
 
     lastFrame = t
     self.requestAnimationFrame(callback)
@@ -73,8 +91,18 @@ async function main() {
       map(([drag, scale]) => drag.div(scale).mul(-1)),
     )
     .subscribe((drag) => {
-      console.log(drag)
+      velocity = null
       camera$.next(camera$.value.add(drag))
+    })
+
+  pointerController.release$
+    .pipe(
+      withLatestFrom(scale$),
+      map(([release, scale]) => release.div(scale).mul(-1)),
+    )
+    .subscribe((release) => {
+      velocity = release
+      console.log(velocity)
     })
 }
 

@@ -6,6 +6,7 @@ export class PointerController {
   private abortController: AbortController
 
   public drag$: Subject<Vec2> = new Subject<Vec2>()
+  public release$: Subject<Vec2> = new Subject<Vec2>()
 
   private pointerIdToEventLog: Map<number, PointerEvent[]> =
     new Map()
@@ -61,6 +62,35 @@ export class PointerController {
           ev.pointerId,
         )
         if (log) {
+          if (log.length) {
+            const lastTen: Vec2[] = []
+
+            for (
+              let i = 0;
+              i < Math.min(11, log.length - 1);
+              i++
+            ) {
+              const prev = log[log.length - 1 - i]
+              const next = log[log.length - 1 - i - 1]
+
+              invariant(prev)
+              invariant(next)
+
+              const dx = prev.clientX - next.clientX
+              const dy = prev.clientY - next.clientY
+
+              lastTen.push(new Vec2(dx, dy))
+            }
+
+            const average = lastTen
+              .reduce(
+                (acc, curr) => acc.add(curr),
+                Vec2.ZERO,
+              )
+              .div(lastTen.length)
+            this.release$.next(average)
+          }
+
           this.pointerIdToEventLog.delete(ev.pointerId)
         }
       },
