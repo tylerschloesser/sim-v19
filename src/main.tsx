@@ -1,7 +1,7 @@
 import { Application } from 'pixi.js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BehaviorSubject } from 'rxjs'
+import { BehaviorSubject, map, withLatestFrom } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { GridContainer } from './grid-container'
 import './index.css'
@@ -65,8 +65,17 @@ async function main() {
   }
   self.requestAnimationFrame(callback)
 
-  // @ts-expect-error
-  const pointerController = new PointerController()
+  const pointerController = new PointerController(canvas)
+
+  pointerController.drag$
+    .pipe(
+      withLatestFrom(scale$),
+      map(([drag, scale]) => drag.div(scale).mul(-1)),
+    )
+    .subscribe((drag) => {
+      console.log(drag)
+      camera$.next(camera$.value.add(drag))
+    })
 }
 
 main()
