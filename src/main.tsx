@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { GridContainer } from './grid-container'
 import './index.css'
+import { PointerController } from './pointer-controller'
 import { Vec2 } from './vec2'
 
 async function main() {
@@ -51,6 +52,21 @@ async function main() {
   app.stage.addChild(
     new GridContainer({ camera$, viewport$, scale$ }),
   )
+
+  let lastFrame = self.performance.now()
+  let callback: FrameRequestCallback = () => {
+    const t = self.performance.now()
+
+    // @ts-expect-error
+    const dt = t - lastFrame
+
+    lastFrame = t
+    self.requestAnimationFrame(callback)
+  }
+  self.requestAnimationFrame(callback)
+
+  // @ts-expect-error
+  const pointerController = new PointerController()
 }
 
 main()
