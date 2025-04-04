@@ -63,32 +63,44 @@ export class PointerController {
         )
         if (log) {
           if (log.length) {
-            const lastTen: Vec2[] = []
+            const lastTen: {
+              dx: number
+              dy: number
+              dt: number
+            }[] = []
 
             for (
               let i = 0;
               i < Math.min(11, log.length - 1);
               i++
             ) {
-              const prev = log[log.length - 1 - i]
-              const next = log[log.length - 1 - i - 1]
+              const prev = log[log.length - 1 - i - 1]
+              const next = log[log.length - 1 - i]
 
               invariant(prev)
               invariant(next)
 
-              const dx = prev.clientX - next.clientX
-              const dy = prev.clientY - next.clientY
+              const dx = next.clientX - prev.clientX
+              const dy = next.clientY - prev.clientY
+              const dt =
+                (next.timeStamp - prev.timeStamp) / 1000
 
-              lastTen.push(new Vec2(dx, dy))
+              lastTen.push({ dx, dy, dt })
             }
 
-            const average = lastTen
-              .reduce(
-                (acc, curr) => acc.add(curr),
-                Vec2.ZERO,
-              )
-              .div(lastTen.length)
-            this.release$.next(average)
+            const average = lastTen.reduce(
+              (acc, curr) => ({
+                dx: acc.dx + curr.dx,
+                dy: acc.dy + curr.dy,
+                dt: acc.dt + curr.dt,
+              }),
+              { dx: 0, dy: 0, dt: 0 },
+            )
+            this.release$.next(
+              new Vec2(average.dx, average.dy).div(
+                average.dt,
+              ),
+            )
           }
 
           this.pointerIdToEventLog.delete(ev.pointerId)

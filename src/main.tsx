@@ -67,7 +67,10 @@ async function main() {
 
       const acceleration = velocity
         .normalize()
-        .mul((1 + len) ** (1 / 2) - 1)
+        // define the shape of the curve
+        .mul((1 + len) ** 1.5 - 1)
+        // stretch it a bit
+        .mul(2)
         .mul(-1)
 
       velocity = velocity.add(acceleration.mul(dt))
@@ -102,7 +105,6 @@ async function main() {
     )
     .subscribe((release) => {
       velocity = release
-      console.log(velocity)
     })
 }
 
