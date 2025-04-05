@@ -38,7 +38,7 @@ export class GridContainer extends Container {
 
         this.g.stroke({
           width: 2,
-          color: 'hsl(0, 0%, 50%)',
+          color: 'hsl(0, 0%, 20%)',
         })
       },
     )
