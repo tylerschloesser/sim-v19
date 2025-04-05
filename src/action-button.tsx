@@ -5,8 +5,8 @@ import { AppContext } from './app-context'
 
 export function ActionButton() {
   const context = useContext(AppContext)
-  const selectedEntityId = useStateObservable(
-    context.selectedEntityId$,
+  const selectedEntity = useStateObservable(
+    context.selectedEntity$,
   )
   return (
     <button
@@ -14,8 +14,8 @@ export function ActionButton() {
         console.log(ev)
       }}
       className={clsx(
-        !selectedEntityId && 'opacity-50',
-        selectedEntityId && 'pointer-events-auto',
+        !selectedEntity && 'opacity-50',
+        selectedEntity && 'pointer-events-auto',
         'bg-white text-black rounded-full aspect-square',
         'flex justify-center items-center',
         'w-20 h-20',

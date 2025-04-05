@@ -55,20 +55,24 @@ async function main() {
     world$,
   } = expandState(state$)
 
-  const selectedEntityId$ = state$.pipe(
-    map(getSelectedEntityId),
+  const selectedEntity$ = state$.pipe(
+    map((state) => {
+      const selectedEntityId = getSelectedEntityId(state)
+      if (!selectedEntityId) {
+        return null
+      }
+      const entity = state.world.entities[selectedEntityId]
+      invariant(entity)
+      return entity
+    }),
     distinctUntilChanged(),
   )
-
-  selectedEntityId$.subscribe((selectedEntityId) => {
-    console.log('selectedEntityId', selectedEntityId)
-  })
 
   const container = document.getElementById('root')
   invariant(container)
 
   const context: AppContext = {
-    selectedEntityId$: state(selectedEntityId$),
+    selectedEntity$: state(selectedEntity$),
     cursor$: state(cursor$),
     cursorSize$: state(cursorSize$),
     cursorInventory$: state(cursorInventory$),

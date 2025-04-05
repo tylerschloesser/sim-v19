@@ -11,15 +11,13 @@ export function CursorComponent() {
   const ref = useRef<HTMLDivElement>(null)
 
   const {
-    selectedEntityId$,
+    selectedEntity$,
     cursor$,
     cursorSize$,
     updateState,
   } = useContext(AppContext)
 
-  const selectedEntityId = useStateObservable(
-    selectedEntityId$,
-  )
+  const selectedEntity = useStateObservable(selectedEntity$)
 
   useEffectWithDestroy(
     (destroy$) => {
@@ -73,7 +71,7 @@ export function CursorComponent() {
       ref={ref}
       className="absolute pointer-events-auto border border-white rounded-full"
     >
-      {selectedEntityId && (
+      {selectedEntity && (
         <div
           className={clsx(
             'absolute left-full bottom-full',
@@ -82,7 +80,7 @@ export function CursorComponent() {
             'text-nowrap',
           )}
         >
-          Entity: {selectedEntityId}
+          Entity: {selectedEntity.id}
         </div>
       )}
     </div>
