@@ -171,7 +171,7 @@ async function main() {
       map(([release, scale]) => release.div(scale).mul(-1)),
     )
     .subscribe((release) => {
-      if (release.length() > 2) {
+      if (release.length() > 4) {
         velocity = release
       }
     })
