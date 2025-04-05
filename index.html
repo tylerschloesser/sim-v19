@@ -14,7 +14,6 @@
     <title>sim-v19</title>
   </head>
   <body class="touch-none bg-yellow-800">
-    <div id="root"></div>
     <div class="absolute inset-0">
       <canvas class="absolute inset-0"></canvas>
       <div
@@ -28,6 +27,10 @@
         ></div>
       </div>
     </div>
+    <div
+      id="root"
+      class="absolute inset-0 pointer-events-none"
+    ></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

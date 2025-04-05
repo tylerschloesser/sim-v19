@@ -9,6 +9,7 @@ import {
   withLatestFrom,
 } from 'rxjs'
 import invariant from 'tiny-invariant'
+import { ActionButton } from './action-button'
 import { GridContainer } from './grid-container'
 import './index.css'
 import { PointerController } from './pointer-controller'
@@ -26,7 +27,11 @@ async function main() {
 
   createRoot(container).render(
     <StrictMode>
-      <></>
+      <div className="absolute bottom-0 w-full flex justify-center">
+        <div className="p-8">
+          <ActionButton />
+        </div>
+      </div>
     </StrictMode>,
   )
 
