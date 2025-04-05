@@ -1,6 +1,7 @@
 import { useStateObservable } from '@react-rxjs/core'
 import clsx from 'clsx'
-import { useContext } from 'react'
+import { useCallback, useContext } from 'react'
+import invariant from 'tiny-invariant'
 import { AppContext } from './app-context'
 
 export function ActionButton() {
@@ -8,11 +9,15 @@ export function ActionButton() {
   const selectedEntity = useStateObservable(
     context.selectedEntity$,
   )
+
+  const onClick = useCallback(() => {
+    invariant(selectedEntity)
+  }, [selectedEntity])
+
   return (
     <button
-      onClick={(ev) => {
-        console.log(ev)
-      }}
+      onClick={onClick}
+      disabled={!selectedEntity}
       className={clsx(
         !selectedEntity && 'opacity-50',
         selectedEntity && 'pointer-events-auto',
