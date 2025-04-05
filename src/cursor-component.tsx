@@ -14,10 +14,14 @@ export function CursorComponent() {
     selectedEntity$,
     cursor$,
     cursorSize$,
+    cursorInventory$,
     updateState,
   } = useContext(AppContext)
 
   const selectedEntity = useStateObservable(selectedEntity$)
+  const cursorInventory = useStateObservable(
+    cursorInventory$,
+  )
 
   useEffectWithDestroy(
     (destroy$) => {
@@ -83,6 +87,19 @@ export function CursorComponent() {
           Entity: {selectedEntity.id}
         </div>
       )}
+      <div
+        className={clsx(
+          'absolute left-0 bottom-full',
+          'text-white',
+          'pointer-events-none',
+          'text-nowrap',
+        )}
+      >
+        {Object.values(cursorInventory).reduce(
+          (acc, count) => acc + count,
+          0,
+        )}
+      </div>
     </div>
   )
 }
