@@ -39,15 +39,18 @@ async function main() {
   const camera$ = new BehaviorSubject<Vec2>(
     new Vec2(0.5, 0.5),
   )
-  const cursor$ = new BehaviorSubject<Vec2>(
-    new Vec2(0.5, 0.5),
-  )
   let velocity: Vec2 | null = null
 
   const viewport$ = new BehaviorSubject<Vec2>(
     new Vec2(window.innerWidth, window.innerHeight),
   )
   const scale$ = new BehaviorSubject<number>(50)
+  const cursorSize$ = new BehaviorSubject<number>(
+    scale$.value * 1.5,
+  )
+  const cursor$ = new BehaviorSubject<Vec2>(
+    viewport$.value.div(2),
+  )
 
   const world$ = new BehaviorSubject<World>(
     await initWorld(),
@@ -133,6 +136,11 @@ async function main() {
 
   const cursorContainer = document.getElementById('cursor')
   invariant(cursorContainer)
+  cursorContainer.style.width = `${cursorSize$.value}px`
+  cursorContainer.style.height = `${cursorSize$.value}px`
+  cursorContainer.style.top = `${-cursorSize$.value / 2}px`
+  cursorContainer.style.left = `${-cursorSize$.value / 2}px`
+
   const cursorPointerController = new PointerController(
     cursorContainer,
   )
