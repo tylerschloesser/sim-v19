@@ -8,6 +8,10 @@ import './index.css'
 import { PointerController } from './pointer-controller'
 import { World } from './schema'
 import { Vec2 } from './vec2'
+import {
+  DomWorldRenderer,
+  WorldRenderer,
+} from './world-renderer'
 
 async function main() {
   const container = document.getElementById('root')
@@ -41,7 +45,6 @@ async function main() {
   )
   const scale$ = new BehaviorSubject<number>(50)
 
-  // @ts-expect-error
   const world$ = new BehaviorSubject<World>({ tick: 0 })
 
   const app = new Application()
@@ -58,6 +61,10 @@ async function main() {
   app.stage.addChild(
     new GridContainer({ camera$, viewport$, scale$ }),
   )
+
+  const worldRenderer: WorldRenderer =
+    new DomWorldRenderer()
+  await worldRenderer.init(world$)
 
   let lastFrame = self.performance.now()
   let callback: FrameRequestCallback = () => {
