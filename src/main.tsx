@@ -6,6 +6,7 @@ import invariant from 'tiny-invariant'
 import { GridContainer } from './grid-container'
 import './index.css'
 import { PointerController } from './pointer-controller'
+import { World } from './schema'
 import { Vec2 } from './vec2'
 
 async function main() {
@@ -39,6 +40,9 @@ async function main() {
     new Vec2(window.innerWidth, window.innerHeight),
   )
   const scale$ = new BehaviorSubject<number>(50)
+
+  // @ts-expect-error
+  const world$ = new BehaviorSubject<World>({ tick: 0 })
 
   const app = new Application()
 
