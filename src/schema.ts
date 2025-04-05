@@ -6,11 +6,11 @@ export const entitySchema = z.strictObject({
   position: ZVec2,
   color: z.string(),
 })
+export type Entity = z.infer<typeof entitySchema>
 
 export const worldSchema = z.strictObject({
   tick: z.number(),
   entities: z.record(entitySchema),
   nextEntityId: z.number(),
 })
-
 export type World = z.infer<typeof worldSchema>
