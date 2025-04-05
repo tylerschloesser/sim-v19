@@ -12,7 +12,10 @@ import {
 import invariant from 'tiny-invariant'
 import { ActionButton } from './action-button'
 import { AppContext } from './app-context'
-import { MineCursorAction } from './cursor-action'
+import {
+  BuildCursorAction,
+  MineCursorAction,
+} from './cursor-action'
 import { CursorComponent } from './cursor-component'
 import { GridContainer } from './grid-container'
 import './index.css'
@@ -51,6 +54,11 @@ async function main() {
     map((state) => {
       const selectedEntityId = getSelectedEntityId(state)
       if (!selectedEntityId) {
+        if ((state.cursorInventory['red'] ?? 0) > 5) {
+          return {
+            type: 'build',
+          } satisfies BuildCursorAction
+        }
         return null
       }
       const entity = state.world.entities[selectedEntityId]
