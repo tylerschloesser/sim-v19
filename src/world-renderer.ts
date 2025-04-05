@@ -1,19 +1,33 @@
 import { Observable } from 'rxjs'
+import invariant from 'tiny-invariant'
 import { World } from './schema'
 
 export interface WorldRenderer {
   init(world$: Observable<World>): Promise<void>
 }
 
+interface DomWorldRendererState {
+  container: HTMLElement
+  world$: Observable<World>
+}
+
 export class DomWorldRenderer implements WorldRenderer {
-  private world$: Observable<World> | null = null
+  // @ts-expect-error
+  private state?: DomWorldRendererState
 
   public async init(
     world$: Observable<World>,
   ): Promise<void> {
-    this.world$ = world$
-    this.world$.subscribe((world) => {
+    const container = document.getElementById('world')
+    invariant(container)
+
+    world$.subscribe((world) => {
       console.log('world', world)
     })
+
+    this.state = {
+      container,
+      world$,
+    }
   }
 }
