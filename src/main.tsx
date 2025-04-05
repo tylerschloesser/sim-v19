@@ -8,6 +8,7 @@ import { GridContainer } from './grid-container'
 import './index.css'
 import { PointerController } from './pointer-controller'
 import { expandState, initState, State } from './state'
+import { getSelectedEntityId } from './state-utils'
 import { Vec2 } from './vec2'
 import {
   DomWorldRenderer,
@@ -38,6 +39,11 @@ async function main() {
 
   const state$ = new BehaviorSubject<State>(
     await initState(),
+  )
+
+  // @ts-expect-error
+  const selectedEntityId$ = state$.pipe(
+    map(getSelectedEntityId),
   )
 
   function updateState(fn: (draft: State) => void): void {
