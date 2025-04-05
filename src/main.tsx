@@ -12,6 +12,7 @@ import {
 import invariant from 'tiny-invariant'
 import { ActionButton } from './action-button'
 import { AppContext } from './app-context'
+import { CursorComponent } from './cursor-component'
 import { GridContainer } from './grid-container'
 import './index.css'
 import { PointerController } from './pointer-controller'
@@ -67,9 +68,12 @@ async function main() {
 
   const context: AppContext = {
     selectedEntityId$: state(selectedEntityId$),
+    cursor$: state(cursor$),
+    cursorSize$: state(cursorSize$),
     camera$: state(camera$),
     viewport$: state(viewport$),
     scale$: state(scale$),
+    updateState,
   }
 
   createRoot(container).render(
@@ -81,6 +85,7 @@ async function main() {
               <ActionButton />
             </div>
           </div>
+          <CursorComponent />
         </Subscribe>
       </AppContext.Provider>
     </StrictMode>,
@@ -170,29 +175,6 @@ async function main() {
         velocity = release
       }
     })
-
-  const cursorContainer = document.getElementById('cursor')
-  invariant(cursorContainer)
-  cursorSize$.subscribe((cursorSize) => {
-    cursorContainer.style.width = `${cursorSize}px`
-    cursorContainer.style.height = `${cursorSize}px`
-    cursorContainer.style.top = `${-cursorSize / 2}px`
-    cursorContainer.style.left = `${-cursorSize / 2}px`
-  })
-
-  const cursorPointerController = new PointerController(
-    cursorContainer,
-  )
-
-  cursorPointerController.drag$.subscribe((drag) => {
-    updateState((draft) => {
-      draft.cursor = draft.cursor.add(drag)
-    })
-  })
-
-  cursor$.subscribe((cursor) => {
-    cursorContainer.style.transform = `translate(${cursor.x}px, ${cursor.y}px)`
-  })
 }
 
 main()

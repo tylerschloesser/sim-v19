@@ -116,4 +116,8 @@ export class PointerController {
       { signal },
     )
   }
+
+  public destroy() {
+    this.abortController.abort()
+  }
 }
