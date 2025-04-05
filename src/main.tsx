@@ -5,6 +5,7 @@ import { BehaviorSubject, map, withLatestFrom } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { GridContainer } from './grid-container'
 import './index.css'
+import { initWorld } from './init-world'
 import { PointerController } from './pointer-controller'
 import { World } from './schema'
 import { Vec2 } from './vec2'
@@ -45,7 +46,9 @@ async function main() {
   )
   const scale$ = new BehaviorSubject<number>(50)
 
-  const world$ = new BehaviorSubject<World>({ tick: 0 })
+  const world$ = new BehaviorSubject<World>(
+    await initWorld(),
+  )
 
   const app = new Application()
 
@@ -64,7 +67,12 @@ async function main() {
 
   const worldRenderer: WorldRenderer =
     new DomWorldRenderer()
-  await worldRenderer.init(world$)
+  await worldRenderer.init({
+    world$,
+    camera$,
+    viewport$,
+    scale$,
+  })
 
   let lastFrame = self.performance.now()
   let callback: FrameRequestCallback = () => {
