@@ -62,45 +62,52 @@ export class PointerController {
           ev.pointerId,
         )
         if (log) {
-          if (log.length) {
-            const lastTen: {
+          if (log.length >= 2) {
+            const releaseWindow: {
               dx: number
               dy: number
               dt: number
             }[] = []
 
-            for (
-              let i = 0;
-              i < Math.min(11, log.length - 1);
-              i++
+            const reverseLog = log.slice().reverse()
+
+            let next = reverseLog.at(0)!
+            invariant(next)
+            let prev = reverseLog.at(1)
+            invariant(prev)
+            let index = 2
+
+            while (
+              prev &&
+              ev.timeStamp - prev.timeStamp < 100
             ) {
-              const prev = log[log.length - 1 - i - 1]
-              const next = log[log.length - 1 - i]
-
-              invariant(prev)
-              invariant(next)
-
               const dx = next.clientX - prev.clientX
               const dy = next.clientY - prev.clientY
               const dt =
                 (next.timeStamp - prev.timeStamp) / 1000
+              invariant(dt > 0)
 
-              lastTen.push({ dx, dy, dt })
+              releaseWindow.push({ dx, dy, dt })
+
+              next = prev
+              prev = reverseLog.at(index++)
             }
 
-            const average = lastTen.reduce(
-              (acc, curr) => ({
-                dx: acc.dx + curr.dx,
-                dy: acc.dy + curr.dy,
-                dt: acc.dt + curr.dt,
-              }),
-              { dx: 0, dy: 0, dt: 0 },
-            )
-            this.release$.next(
-              new Vec2(average.dx, average.dy).div(
-                average.dt,
-              ),
-            )
+            if (releaseWindow.length > 0) {
+              const average = releaseWindow.reduce(
+                (acc, curr) => ({
+                  dx: acc.dx + curr.dx,
+                  dy: acc.dy + curr.dy,
+                  dt: acc.dt + curr.dt,
+                }),
+                { dx: 0, dy: 0, dt: 0 },
+              )
+              this.release$.next(
+                new Vec2(average.dx, average.dy).div(
+                  average.dt,
+                ),
+              )
+            }
           }
 
           this.pointerIdToEventLog.delete(ev.pointerId)
