@@ -1,3 +1,4 @@
+import { state, Subscribe } from '@react-rxjs/core'
 import { produce } from 'immer'
 import { Application } from 'pixi.js'
 import { StrictMode } from 'react'
@@ -10,6 +11,7 @@ import {
 } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { ActionButton } from './action-button'
+import { AppContext } from './app-context'
 import { GridContainer } from './grid-container'
 import './index.css'
 import { PointerController } from './pointer-controller'
@@ -22,19 +24,6 @@ import {
 } from './world-renderer'
 
 async function main() {
-  const container = document.getElementById('root')
-  invariant(container)
-
-  createRoot(container).render(
-    <StrictMode>
-      <div className="absolute bottom-0 w-full flex justify-center">
-        <div className="p-8">
-          <ActionButton />
-        </div>
-      </div>
-    </StrictMode>,
-  )
-
   // prevent swipe forward/backward on iOS
   document.addEventListener(
     'touchstart',
@@ -59,6 +48,27 @@ async function main() {
   selectedEntityId$.subscribe((selectedEntityId) => {
     console.log('selectedEntityId', selectedEntityId)
   })
+
+  const container = document.getElementById('root')
+  invariant(container)
+
+  const context: AppContext = {
+    selectedEntityId$: state(selectedEntityId$),
+  }
+
+  createRoot(container).render(
+    <StrictMode>
+      <AppContext.Provider value={context}>
+        <Subscribe>
+          <div className="absolute bottom-0 w-full flex justify-center">
+            <div className="p-8">
+              <ActionButton />
+            </div>
+          </div>
+        </Subscribe>
+      </AppContext.Provider>
+    </StrictMode>,
+  )
 
   function updateState(fn: (draft: State) => void): void {
     state$.next(produce(state$.value, fn))
