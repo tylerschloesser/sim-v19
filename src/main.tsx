@@ -40,6 +40,19 @@ async function main() {
     await initState(),
   )
 
+  function updateState(fn: (draft: State) => void): void {
+    state$.next(produce(state$.value, fn))
+  }
+
+  const {
+    camera$,
+    viewport$,
+    scale$,
+    cursorSize$,
+    cursor$,
+    world$,
+  } = expandState(state$)
+
   const selectedEntityId$ = state$.pipe(
     map(getSelectedEntityId),
     distinctUntilChanged(),
@@ -54,6 +67,9 @@ async function main() {
 
   const context: AppContext = {
     selectedEntityId$: state(selectedEntityId$),
+    camera$: state(camera$),
+    viewport$: state(viewport$),
+    scale$: state(scale$),
   }
 
   createRoot(container).render(
@@ -69,19 +85,6 @@ async function main() {
       </AppContext.Provider>
     </StrictMode>,
   )
-
-  function updateState(fn: (draft: State) => void): void {
-    state$.next(produce(state$.value, fn))
-  }
-
-  const {
-    camera$,
-    viewport$,
-    scale$,
-    cursorSize$,
-    cursor$,
-    world$,
-  } = expandState(state$)
 
   let velocity: Vec2 | null = null
 
