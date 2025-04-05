@@ -1,3 +1,5 @@
+import { useStateObservable } from '@react-rxjs/core'
+import clsx from 'clsx'
 import { useContext, useRef } from 'react'
 import { takeUntil } from 'rxjs'
 import invariant from 'tiny-invariant'
@@ -8,8 +10,16 @@ import { useEffectWithDestroy } from './use-effect-with-destroy'
 export function CursorComponent() {
   const ref = useRef<HTMLDivElement>(null)
 
-  const { cursor$, cursorSize$, updateState } =
-    useContext(AppContext)
+  const {
+    selectedEntityId$,
+    cursor$,
+    cursorSize$,
+    updateState,
+  } = useContext(AppContext)
+
+  const selectedEntityId = useStateObservable(
+    selectedEntityId$,
+  )
 
   useEffectWithDestroy(
     (destroy$) => {
@@ -62,6 +72,19 @@ export function CursorComponent() {
     <div
       ref={ref}
       className="absolute pointer-events-auto border border-white rounded-full"
-    />
+    >
+      {selectedEntityId && (
+        <div
+          className={clsx(
+            'absolute left-full bottom-full',
+            'text-white',
+            'pointer-events-none',
+            'text-nowrap',
+          )}
+        >
+          Entity: {selectedEntityId}
+        </div>
+      )}
+    </div>
   )
 }
