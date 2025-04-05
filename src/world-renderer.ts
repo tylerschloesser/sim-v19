@@ -1,13 +1,13 @@
-import { BehaviorSubject, Observable } from 'rxjs'
+import { combineLatest, Observable } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { World } from './schema'
 import { Vec2 } from './vec2'
 
 export interface InitArgs {
   world$: Observable<World>
-  camera$: BehaviorSubject<Vec2>
-  viewport$: BehaviorSubject<Vec2>
-  scale$: BehaviorSubject<number>
+  camera$: Observable<Vec2>
+  viewport$: Observable<Vec2>
+  scale$: Observable<number>
 }
 
 export interface WorldRenderer {
@@ -38,36 +38,41 @@ export class DomWorldRenderer implements WorldRenderer {
       HTMLElement
     >()
 
-    world$.subscribe((world) => {
-      for (const entity of Object.values(world.entities)) {
-        let entityContainer = entityIdToContainer.get(
-          entity.id,
-        )
-        if (!entityContainer) {
-          entityContainer = document.createElement('div')
-          container.appendChild(entityContainer)
-
-          const { x, y } = new Vec2(entity.position).mul(
-            scale$.value,
+    combineLatest([world$, scale$]).subscribe(
+      ([world, scale]) => {
+        for (const entity of Object.values(
+          world.entities,
+        )) {
+          let entityContainer = entityIdToContainer.get(
+            entity.id,
           )
-          entityContainer.dataset['entityId'] = entity.id
-          entityContainer.style.position = 'absolute'
-          entityContainer.style.transform = `translate(${x}px, ${y}px)`
-          entityContainer.style.width = `${scale$.value}px`
-          entityContainer.style.height = `${scale$.value}px`
-          entityContainer.style.backgroundColor =
-            entity.color
+          if (!entityContainer) {
+            entityContainer = document.createElement('div')
+            container.appendChild(entityContainer)
+
+            const { x, y } = new Vec2(entity.position).mul(
+              scale,
+            )
+            entityContainer.dataset['entityId'] = entity.id
+            entityContainer.style.position = 'absolute'
+            entityContainer.style.transform = `translate(${x}px, ${y}px)`
+            entityContainer.style.width = `${scale}px`
+            entityContainer.style.height = `${scale}px`
+            entityContainer.style.backgroundColor =
+              entity.color
+          }
         }
-      }
-    })
+      },
+    )
 
-    camera$.subscribe((camera) => {
-      const { x, y } = camera
-        .mul(-1 * scale$.value)
-        .add(viewport$.value.div(2))
-
-      container.style.transform = `translate(${x}px, ${y}px)`
-    })
+    combineLatest([camera$, scale$, viewport$]).subscribe(
+      ([camera, scale, viewport]) => {
+        const { x, y } = camera
+          .mul(-1 * scale)
+          .add(viewport.div(2))
+        container.style.transform = `translate(${x}px, ${y}px)`
+      },
+    )
 
     this.state = {
       container,

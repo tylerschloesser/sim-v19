@@ -1,3 +1,4 @@
+import { produce } from 'immer'
 import { Application } from 'pixi.js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -5,9 +6,8 @@ import { BehaviorSubject, map, withLatestFrom } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { GridContainer } from './grid-container'
 import './index.css'
-import { initWorld } from './init-world'
 import { PointerController } from './pointer-controller'
-import { World } from './schema'
+import { expandState, initState, State } from './state'
 import { Vec2 } from './vec2'
 import {
   DomWorldRenderer,
@@ -36,25 +36,24 @@ async function main() {
   const canvas = document.querySelector('canvas')
   invariant(canvas)
 
-  const camera$ = new BehaviorSubject<Vec2>(
-    new Vec2(0.5, 0.5),
+  const state$ = new BehaviorSubject<State>(
+    await initState(),
   )
+
+  function updateState(fn: (draft: State) => void): void {
+    state$.next(produce(state$.value, fn))
+  }
+
+  const {
+    camera$,
+    viewport$,
+    scale$,
+    cursorSize$,
+    cursor$,
+    world$,
+  } = expandState(state$)
+
   let velocity: Vec2 | null = null
-
-  const viewport$ = new BehaviorSubject<Vec2>(
-    new Vec2(window.innerWidth, window.innerHeight),
-  )
-  const scale$ = new BehaviorSubject<number>(50)
-  const cursorSize$ = new BehaviorSubject<number>(
-    scale$.value * 1.5,
-  )
-  const cursor$ = new BehaviorSubject<Vec2>(
-    viewport$.value.div(2),
-  )
-
-  const world$ = new BehaviorSubject<World>(
-    await initWorld(),
-  )
 
   const app = new Application()
 
@@ -102,7 +101,10 @@ async function main() {
       if (velocity.length() < 0.01) {
         velocity = null
       } else {
-        camera$.next(camera$.value.add(velocity.mul(dt)))
+        updateState((draft) => {
+          invariant(velocity)
+          draft.camera = draft.camera.add(velocity.mul(dt))
+        })
       }
     }
 
@@ -120,7 +122,9 @@ async function main() {
     )
     .subscribe((drag) => {
       velocity = null
-      camera$.next(camera$.value.add(drag))
+      updateState((draft) => {
+        draft.camera = draft.camera.add(drag)
+      })
     })
 
   pointerController.release$
@@ -136,17 +140,21 @@ async function main() {
 
   const cursorContainer = document.getElementById('cursor')
   invariant(cursorContainer)
-  cursorContainer.style.width = `${cursorSize$.value}px`
-  cursorContainer.style.height = `${cursorSize$.value}px`
-  cursorContainer.style.top = `${-cursorSize$.value / 2}px`
-  cursorContainer.style.left = `${-cursorSize$.value / 2}px`
+  cursorSize$.subscribe((cursorSize) => {
+    cursorContainer.style.width = `${cursorSize}px`
+    cursorContainer.style.height = `${cursorSize}px`
+    cursorContainer.style.top = `${-cursorSize / 2}px`
+    cursorContainer.style.left = `${-cursorSize / 2}px`
+  })
 
   const cursorPointerController = new PointerController(
     cursorContainer,
   )
 
   cursorPointerController.drag$.subscribe((drag) => {
-    cursor$.next(cursor$.value.add(drag))
+    updateState((draft) => {
+      draft.cursor = draft.cursor.add(drag)
+    })
   })
 
   cursor$.subscribe((cursor) => {
