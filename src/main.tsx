@@ -39,6 +39,9 @@ async function main() {
   const camera$ = new BehaviorSubject<Vec2>(
     new Vec2(0.5, 0.5),
   )
+  const cursor$ = new BehaviorSubject<Vec2>(
+    new Vec2(0.5, 0.5),
+  )
   let velocity: Vec2 | null = null
 
   const viewport$ = new BehaviorSubject<Vec2>(
@@ -123,8 +126,24 @@ async function main() {
       map(([release, scale]) => release.div(scale).mul(-1)),
     )
     .subscribe((release) => {
-      velocity = release
+      if (release.length() > 1) {
+        velocity = release
+      }
     })
+
+  const cursorContainer = document.getElementById('cursor')
+  invariant(cursorContainer)
+  const cursorPointerController = new PointerController(
+    cursorContainer,
+  )
+
+  cursorPointerController.drag$.subscribe((drag) => {
+    cursor$.next(cursor$.value.add(drag))
+  })
+
+  cursor$.subscribe((cursor) => {
+    cursorContainer.style.transform = `translate(${cursor.x}px, ${cursor.y}px)`
+  })
 }
 
 main()

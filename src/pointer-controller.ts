@@ -27,7 +27,7 @@ export class PointerController {
       },
     )
 
-    container.addEventListener(
+    document.addEventListener(
       'pointermove',
       (ev) => {
         const log = this.pointerIdToEventLog.get(
@@ -55,7 +55,7 @@ export class PointerController {
       { signal },
     )
 
-    container.addEventListener(
+    document.addEventListener(
       'pointerup',
       (ev) => {
         const log = this.pointerIdToEventLog.get(
