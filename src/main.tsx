@@ -51,6 +51,7 @@ async function main() {
     scale$,
     cursorSize$,
     cursor$,
+    cursorInventory$,
     world$,
   } = expandState(state$)
 
@@ -70,6 +71,7 @@ async function main() {
     selectedEntityId$: state(selectedEntityId$),
     cursor$: state(cursor$),
     cursorSize$: state(cursorSize$),
+    cursorInventory$: state(cursorInventory$),
     camera$: state(camera$),
     viewport$: state(viewport$),
     scale$: state(scale$),

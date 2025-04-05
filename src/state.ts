@@ -14,6 +14,7 @@ export interface State {
   scale: number
   cursorSize: number
   cursor: Vec2
+  cursorInventory: Record<string, number>
   world: World
 }
 
@@ -29,6 +30,7 @@ export async function initState(): Promise<State> {
     scale,
     cursorSize: scale * 1.5,
     cursor: viewport.div(2),
+    cursorInventory: {},
     world: await initWorld(),
   }
 }
@@ -41,6 +43,7 @@ export function expandState(
   scale$: Observable<number>
   cursorSize$: Observable<number>
   cursor$: Observable<Vec2>
+  cursorInventory$: Observable<Record<string, number>>
   world$: Observable<World>
 } {
   const camera$ = state$.pipe(
@@ -63,6 +66,10 @@ export function expandState(
     map((state) => state.cursor),
     distinctUntilChanged(),
   )
+  const cursorInventory$ = state$.pipe(
+    map((state) => state.cursorInventory),
+    distinctUntilChanged(),
+  )
   const world$ = state$.pipe(
     map((state) => state.world),
     distinctUntilChanged(),
@@ -73,6 +80,7 @@ export function expandState(
     scale$,
     cursorSize$,
     cursor$,
+    cursorInventory$,
     world$,
   }
 }

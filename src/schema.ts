@@ -14,8 +14,3 @@ export const worldSchema = z.strictObject({
   nextEntityId: z.number(),
 })
 export type World = z.infer<typeof worldSchema>
-
-export const cursorSchema = z.strictObject({
-  position: ZVec2,
-})
-export type Cursor = z.infer<typeof cursorSchema>

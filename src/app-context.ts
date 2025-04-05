@@ -8,6 +8,7 @@ export interface AppContext {
 
   cursor$: StateObservable<Vec2>
   cursorSize$: StateObservable<number>
+  cursorInventory$: StateObservable<Record<string, number>>
 
   camera$: StateObservable<Vec2>
   viewport$: StateObservable<Vec2>
