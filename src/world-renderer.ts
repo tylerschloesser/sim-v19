@@ -47,8 +47,11 @@ export class DomWorldRenderer implements WorldRenderer {
           entityContainer = document.createElement('div')
           container.appendChild(entityContainer)
 
-          const { x, y } = entity.position
+          const { x, y } = new Vec2(entity.position).mul(
+            scale$.value,
+          )
           entityContainer.dataset['entityId'] = entity.id
+          entityContainer.style.position = 'absolute'
           entityContainer.style.transform = `translate(${x}px, ${y}px)`
           entityContainer.style.width = `${scale$.value}px`
           entityContainer.style.height = `${scale$.value}px`

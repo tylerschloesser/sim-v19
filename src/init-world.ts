@@ -18,6 +18,8 @@ export async function initWorld(): Promise<World> {
   }
 
   addEntity(new Vec2(0, 0), 'red')
+  addEntity(new Vec2(2, 2), 'green')
+  addEntity(new Vec2(-3, -3), 'blue')
 
   return {
     tick: 0,
