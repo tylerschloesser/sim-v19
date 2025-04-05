@@ -2,7 +2,12 @@ import { produce } from 'immer'
 import { Application } from 'pixi.js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BehaviorSubject, map, withLatestFrom } from 'rxjs'
+import {
+  BehaviorSubject,
+  distinctUntilChanged,
+  map,
+  withLatestFrom,
+} from 'rxjs'
 import invariant from 'tiny-invariant'
 import { GridContainer } from './grid-container'
 import './index.css'
@@ -41,10 +46,14 @@ async function main() {
     await initState(),
   )
 
-  // @ts-expect-error
   const selectedEntityId$ = state$.pipe(
     map(getSelectedEntityId),
+    distinctUntilChanged(),
   )
+
+  selectedEntityId$.subscribe((selectedEntityId) => {
+    console.log('selectedEntityId', selectedEntityId)
+  })
 
   function updateState(fn: (draft: State) => void): void {
     state$.next(produce(state$.value, fn))
