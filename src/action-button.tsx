@@ -5,14 +5,20 @@ import invariant from 'tiny-invariant'
 import { AppContext } from './app-context'
 
 export function ActionButton() {
-  const context = useContext(AppContext)
-  const selectedEntity = useStateObservable(
-    context.selectedEntity$,
-  )
+  const { selectedEntity$, updateState } =
+    useContext(AppContext)
+  const selectedEntity = useStateObservable(selectedEntity$)
 
   const onClick = useCallback(() => {
     invariant(selectedEntity)
-  }, [selectedEntity])
+    console.log('hi')
+
+    updateState((draft) => {
+      draft.cursorInventory[selectedEntity.color] =
+        (draft.cursorInventory[selectedEntity.color] ?? 0) +
+        1
+    })
+  }, [selectedEntity, updateState])
 
   return (
     <button
@@ -20,7 +26,8 @@ export function ActionButton() {
       disabled={!selectedEntity}
       className={clsx(
         !selectedEntity && 'opacity-50',
-        selectedEntity && 'pointer-events-auto',
+        selectedEntity &&
+          'pointer-events-auto cursor-pointer',
         'bg-white text-black rounded-full aspect-square',
         'flex justify-center items-center',
         'w-20 h-20',

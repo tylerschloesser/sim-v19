@@ -25,15 +25,6 @@ import {
 } from './world-renderer'
 
 async function main() {
-  // prevent swipe forward/backward on iOS
-  document.addEventListener(
-    'touchstart',
-    (ev) => {
-      ev.preventDefault()
-    },
-    { passive: false },
-  )
-
   const canvas = document.querySelector('canvas')
   invariant(canvas)
 
