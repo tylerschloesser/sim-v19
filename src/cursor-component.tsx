@@ -1,6 +1,6 @@
 import { useStateObservable } from '@react-rxjs/core'
 import clsx from 'clsx'
-import { useContext, useRef } from 'react'
+import { Fragment, useContext, useRef } from 'react'
 import { takeUntil } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { AppContext } from './app-context'
@@ -95,10 +95,27 @@ export function CursorComponent() {
           'text-nowrap',
         )}
       >
-        {Object.values(cursorInventory).reduce(
-          (acc, count) => acc + count,
-          0,
-        )}
+        <div
+          className={clsx(
+            'grid grid-cols-2 gap-1',
+            'items-center',
+            'font-mono text-xs',
+          )}
+        >
+          {Object.entries(cursorInventory).map(
+            ([color, count]) => (
+              <Fragment key={color}>
+                <div
+                  style={{
+                    backgroundColor: color,
+                  }}
+                  className={clsx('w-4 h-4 rounded-full')}
+                ></div>
+                <div>{count}</div>
+              </Fragment>
+            ),
+          )}
+        </div>
       </div>
     </div>
   )

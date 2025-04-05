@@ -8,6 +8,20 @@ import { initWorld } from './init-world'
 import { World } from './schema'
 import { Vec2 } from './vec2'
 
+export type CursorActionType = 'mine' | 'build'
+
+export interface MineCursorAction {
+  type: 'mine'
+}
+
+export interface BuildCursorAction {
+  type: 'build'
+}
+
+export type CursorAction =
+  | MineCursorAction
+  | BuildCursorAction
+
 export interface State {
   camera: Vec2
   viewport: Vec2
@@ -15,6 +29,7 @@ export interface State {
   cursorSize: number
   cursor: Vec2
   cursorInventory: Record<string, number>
+  cursorAction: CursorAction | null
   world: World
 }
 
@@ -31,6 +46,7 @@ export async function initState(): Promise<State> {
     cursorSize: scale * 1.5,
     cursor: viewport.div(2),
     cursorInventory: {},
+    cursorAction: null,
     world: await initWorld(),
   }
 }
