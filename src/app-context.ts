@@ -1,11 +1,11 @@
 import { StateObservable } from '@react-rxjs/core'
 import React from 'react'
-import { Entity } from './schema'
+import { CursorAction } from './cursor-action'
 import { State } from './state'
 import { Vec2 } from './vec2'
 
 export interface AppContext {
-  selectedEntity$: StateObservable<Entity | null>
+  cursorAction$: StateObservable<CursorAction | null>
 
   cursor$: StateObservable<Vec2>
   cursorSize$: StateObservable<number>

@@ -12,6 +12,7 @@ import {
 import invariant from 'tiny-invariant'
 import { ActionButton } from './action-button'
 import { AppContext } from './app-context'
+import { MineCursorAction } from './cursor-action'
 import { CursorComponent } from './cursor-component'
 import { GridContainer } from './grid-container'
 import './index.css'
@@ -46,7 +47,7 @@ async function main() {
     world$,
   } = expandState(state$)
 
-  const selectedEntity$ = state$.pipe(
+  const cursorAction$ = state$.pipe(
     map((state) => {
       const selectedEntityId = getSelectedEntityId(state)
       if (!selectedEntityId) {
@@ -54,7 +55,10 @@ async function main() {
       }
       const entity = state.world.entities[selectedEntityId]
       invariant(entity)
-      return entity
+      return {
+        type: 'mine',
+        entity,
+      } satisfies MineCursorAction
     }),
     distinctUntilChanged(),
   )
@@ -63,7 +67,7 @@ async function main() {
   invariant(container)
 
   const context: AppContext = {
-    selectedEntity$: state(selectedEntity$),
+    cursorAction$: state(cursorAction$),
     cursor$: state(cursor$),
     cursorSize$: state(cursorSize$),
     cursorInventory$: state(cursorInventory$),

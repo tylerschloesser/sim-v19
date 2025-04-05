@@ -5,35 +5,54 @@ import invariant from 'tiny-invariant'
 import { AppContext } from './app-context'
 
 export function ActionButton() {
-  const { selectedEntity$, updateState } =
+  const { cursorAction$, updateState } =
     useContext(AppContext)
-  const selectedEntity = useStateObservable(selectedEntity$)
+  const cursorAction = useStateObservable(cursorAction$)
 
   const onClick = useCallback(() => {
-    invariant(selectedEntity)
-    console.log('hi')
+    invariant(cursorAction)
 
-    updateState((draft) => {
-      draft.cursorInventory[selectedEntity.color] =
-        (draft.cursorInventory[selectedEntity.color] ?? 0) +
-        1
-    })
-  }, [selectedEntity, updateState])
+    switch (cursorAction.type) {
+      case 'mine': {
+        const { entity } = cursorAction
+        updateState((draft) => {
+          draft.cursorInventory[entity.color] =
+            (draft.cursorInventory[entity.color] ?? 0) + 1
+        })
+        break
+      }
+      default: {
+        invariant(false, 'TODO')
+      }
+    }
+  }, [cursorAction, updateState])
+
+  let label = ''
+  switch (cursorAction?.type) {
+    case 'mine':
+      label = 'Mine'
+      break
+    case 'build':
+      label = 'Build'
+      break
+    default:
+      break
+  }
 
   return (
     <button
       onClick={onClick}
-      disabled={!selectedEntity}
+      disabled={!cursorAction}
       className={clsx(
-        !selectedEntity && 'opacity-50',
-        selectedEntity &&
+        !cursorAction && 'opacity-50',
+        cursorAction &&
           'pointer-events-auto cursor-pointer',
         'bg-white text-black rounded-full aspect-square',
         'flex justify-center items-center',
         'w-20 h-20',
       )}
     >
-      <span>Mine</span>
+      <span>{label}</span>
     </button>
   )
 }
