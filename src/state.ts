@@ -51,6 +51,7 @@ export function expandState(
   cursor$: Observable<Vec2>
   attachedRobotId$: Observable<string | null>
   world$: Observable<World>
+  entityIds$: Observable<string[]>
   robotIds$: Observable<string[]>
 } {
   const camera$ = state$.pipe(
@@ -81,6 +82,9 @@ export function expandState(
     map((state) => state.world),
     distinctUntilChanged(),
   )
+  const entityIds$ = world$.pipe(
+    map((world) => Object.keys(world.entities)),
+  )
   const robotIds$ = world$.pipe(
     map((world) => Object.keys(world.robots)),
   )
@@ -92,6 +96,7 @@ export function expandState(
     cursor$,
     attachedRobotId$,
     world$,
+    entityIds$,
     robotIds$,
   }
 }

@@ -15,12 +15,14 @@ import { App } from './app'
 import { AppContext } from './app-context'
 import {
   AttachCursorAction,
+  BuildCursorAction,
   MineCursorAction,
   StopCursorAction,
 } from './cursor-action'
 import { GridContainer } from './grid-container'
 import './index.css'
 import { PointerController } from './pointer-controller'
+import { entityTypeSchema } from './schema'
 import { expandState, initState, State } from './state'
 import {
   getSelectedEntityId,
@@ -28,10 +30,6 @@ import {
 } from './state-utils'
 import { tickState } from './ticker'
 import { Vec2 } from './vec2'
-import {
-  DomWorldRenderer,
-  WorldRenderer,
-} from './world-renderer'
 
 async function main() {
   const canvas = document.querySelector('canvas')
@@ -77,6 +75,7 @@ async function main() {
     cursor$,
     attachedRobotId$,
     world$,
+    entityIds$,
     robotIds$,
   } = expandState(state$)
 
@@ -92,6 +91,12 @@ async function main() {
             type: 'stop',
             robotId: robot.id,
           } satisfies StopCursorAction
+        }
+        if ((robot.inventory['red'] ?? 0) >= 5) {
+          return {
+            type: 'build',
+            entityType: entityTypeSchema.enum.Furnace,
+          } satisfies BuildCursorAction
         }
         if (selectedEntityId) {
           return {
@@ -117,6 +122,14 @@ async function main() {
 
   const container = document.getElementById('root')
   invariant(container)
+
+  const getEntity$ = state((entityId: string) =>
+    world$.pipe(
+      map((world) => world.entities[entityId]),
+      filter((value) => value !== undefined),
+      distinctUntilChanged(),
+    ),
+  )
 
   const getRobot$ = state((robotId: string) =>
     world$.pipe(
@@ -153,9 +166,11 @@ async function main() {
     viewport$: state(viewport$),
     scale$: state(scale$),
     updateState,
+    getEntity$,
     getRobot$,
     getRobotInventory$,
     getRobotTask$,
+    entityIds$: state(entityIds$),
     robotIds$: state(robotIds$),
   }
 
@@ -185,15 +200,6 @@ async function main() {
   app.stage.addChild(
     new GridContainer({ camera$, viewport$, scale$ }),
   )
-
-  const worldRenderer: WorldRenderer =
-    new DomWorldRenderer()
-  await worldRenderer.init({
-    world$,
-    camera$,
-    viewport$,
-    scale$,
-  })
 
   let lastFrame = self.performance.now()
   let callback: FrameRequestCallback = () => {

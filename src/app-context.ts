@@ -1,7 +1,7 @@
 import { StateObservable } from '@react-rxjs/core'
 import React from 'react'
 import { CursorAction } from './cursor-action'
-import { Robot } from './schema'
+import { Entity, Robot } from './schema'
 import { State } from './state'
 import { Vec2 } from './vec2'
 
@@ -18,6 +18,8 @@ export interface AppContext {
 
   updateState(fn: (draft: State) => void): void
 
+  getEntity$: (entityId: string) => StateObservable<Entity>
+
   getRobot$: (robotId: string) => StateObservable<Robot>
   getRobotInventory$: (
     robotId: string,
@@ -26,6 +28,7 @@ export interface AppContext {
     robotId: string,
   ) => StateObservable<Robot['task']>
 
+  entityIds$: StateObservable<string[]>
   robotIds$: StateObservable<string[]>
 }
 

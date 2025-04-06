@@ -1,5 +1,8 @@
 import invariant from 'tiny-invariant'
-import { robotTaskTypeSchema } from './schema'
+import {
+  entityTypeSchema,
+  robotTaskTypeSchema,
+} from './schema'
 import { State } from './state'
 
 export function tickState(state: State) {
@@ -11,7 +14,9 @@ export function tickState(state: State) {
         case robotTaskTypeSchema.enum.Mine: {
           const entity =
             state.world.entities[robot.task.entityId]
-          invariant(entity)
+          invariant(
+            entity?.type === entityTypeSchema.enum.Resource,
+          )
           robot.inventory[entity.color] =
             (robot.inventory[entity.color] ?? 0) + 1
           break

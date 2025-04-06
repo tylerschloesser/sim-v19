@@ -5,14 +5,27 @@ import invariant from 'tiny-invariant'
 import { ActionButton } from './action-button'
 import { AppContext } from './app-context'
 import { CursorComponent } from './cursor-component'
+import { EntityComponent } from './entity-component'
 import { RobotComponent } from './robot-component'
 import { WorldComponent } from './world-component'
 
 export function App() {
-  const { robotIds$ } = useContext(AppContext)
+  const { entityIds$, robotIds$ } = useContext(AppContext)
+  const entityIds = useStateObservable(entityIds$)
   const robotIds = useStateObservable(robotIds$)
   return (
     <>
+      <WorldComponent>
+        {entityIds.map((entityId) => (
+          <EntityComponent
+            entityId={entityId}
+            key={entityId}
+          />
+        ))}
+        {robotIds.map((robotId) => (
+          <RobotComponent robotId={robotId} key={robotId} />
+        ))}
+      </WorldComponent>
       <div className="absolute bottom-0 w-full flex justify-center">
         <div
           className={clsx('flex items-center gap-8 p-8')}
@@ -23,11 +36,6 @@ export function App() {
         </div>
       </div>
       <CursorComponent />
-      <WorldComponent>
-        {robotIds.map((robotId) => (
-          <RobotComponent robotId={robotId} key={robotId} />
-        ))}
-      </WorldComponent>
     </>
   )
 }

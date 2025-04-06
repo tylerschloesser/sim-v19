@@ -1,3 +1,5 @@
+import { EntityType } from './schema'
+
 export type CursorActionType = 'mine' | 'build' | 'attach'
 
 export interface MineCursorAction {
@@ -13,6 +15,7 @@ export interface StopCursorAction {
 
 export interface BuildCursorAction {
   type: 'build'
+  entityType: EntityType
 }
 
 export interface AttachCursorAction {
