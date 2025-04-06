@@ -51,6 +51,7 @@ export function expandState(
   scale$: Observable<number>
   cursorSize$: Observable<number>
   cursor$: Observable<Vec2>
+  attachedRobotId$: Observable<string | null>
   cursorInventory$: Observable<Record<string, number>>
   world$: Observable<World>
 } {
@@ -74,6 +75,10 @@ export function expandState(
     map((state) => state.cursor),
     distinctUntilChanged(),
   )
+  const attachedRobotId$ = state$.pipe(
+    map((state) => state.attachedRobotId),
+    distinctUntilChanged(),
+  )
   const cursorInventory$ = state$.pipe(
     map((state) => state.cursorInventory),
     distinctUntilChanged(),
@@ -88,6 +93,7 @@ export function expandState(
     scale$,
     cursorSize$,
     cursor$,
+    attachedRobotId$,
     cursorInventory$,
     world$,
   }

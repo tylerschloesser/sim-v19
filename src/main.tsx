@@ -10,13 +10,12 @@ import {
   withLatestFrom,
 } from 'rxjs'
 import invariant from 'tiny-invariant'
-import { ActionButton } from './action-button'
+import { App } from './app'
 import { AppContext } from './app-context'
 import {
   BuildCursorAction,
   MineCursorAction,
 } from './cursor-action'
-import { CursorComponent } from './cursor-component'
 import { GridContainer } from './grid-container'
 import './index.css'
 import { PointerController } from './pointer-controller'
@@ -59,6 +58,7 @@ async function main() {
     scale$,
     cursorSize$,
     cursor$,
+    attachedRobotId$,
     cursorInventory$,
     world$,
   } = expandState(state$)
@@ -92,6 +92,7 @@ async function main() {
     cursor$: state(cursor$),
     cursorSize$: state(cursorSize$),
     cursorInventory$: state(cursorInventory$),
+    attachedRobotId$: state(attachedRobotId$),
     camera$: state(camera$),
     viewport$: state(viewport$),
     scale$: state(scale$),
@@ -102,12 +103,7 @@ async function main() {
     <StrictMode>
       <AppContext.Provider value={context}>
         <Subscribe>
-          <div className="absolute bottom-0 w-full flex justify-center">
-            <div className="p-8">
-              <ActionButton />
-            </div>
-          </div>
-          <CursorComponent />
+          <App />
         </Subscribe>
       </AppContext.Provider>
     </StrictMode>,

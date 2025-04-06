@@ -10,6 +10,7 @@ export interface AppContext {
   cursor$: StateObservable<Vec2>
   cursorSize$: StateObservable<number>
   cursorInventory$: StateObservable<Record<string, number>>
+  attachedRobotId$: StateObservable<string | null>
 
   camera$: StateObservable<Vec2>
   viewport$: StateObservable<Vec2>
