@@ -4,6 +4,7 @@ import {
   map,
   Observable,
 } from 'rxjs'
+import invariant from 'tiny-invariant'
 import { initWorld } from './init-world'
 import { World } from './schema'
 import { Vec2 } from './vec2'
@@ -26,13 +27,17 @@ export async function initState(): Promise<State> {
   )
   const scale = 50
   const world = await initWorld()
+
+  const attachedRobotId = Object.keys(world.robots)[0]
+  invariant(attachedRobotId)
+
   return {
     camera: new Vec2(0.5, 0.5),
     viewport,
     scale,
     cursorSize: scale * 1.5,
     cursor: viewport.div(2),
-    attachedRobotId: null,
+    attachedRobotId,
     cursorInventory: {},
     world,
   }
