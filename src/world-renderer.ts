@@ -49,6 +49,10 @@ export class DomWorldRenderer implements WorldRenderer {
           )
           if (!entityContainer) {
             entityContainer = document.createElement('div')
+            entityIdToContainer.set(
+              entity.id,
+              entityContainer,
+            )
             container.appendChild(entityContainer)
 
             const { x, y } = new Vec2(entity.position).mul(
@@ -79,6 +83,7 @@ export class DomWorldRenderer implements WorldRenderer {
           )
           if (!robotContainer) {
             robotContainer = document.createElement('div')
+            robotIdToContainer.set(robot.id, robotContainer)
             container.appendChild(robotContainer)
 
             const r = robot.radius * scale

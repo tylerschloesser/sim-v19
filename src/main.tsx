@@ -43,6 +43,13 @@ async function main() {
   function updateCamera(d: Vec2): void {
     updateState((draft) => {
       draft.camera = draft.camera.add(d)
+
+      if (draft.attachedRobotId) {
+        const robot =
+          draft.world.robots[draft.attachedRobotId]
+        invariant(robot)
+        robot.position = new Vec2(robot.position).add(d)
+      }
     })
   }
 
