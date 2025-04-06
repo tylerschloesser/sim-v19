@@ -13,6 +13,7 @@ import invariant from 'tiny-invariant'
 import { App } from './app'
 import { AppContext } from './app-context'
 import {
+  AttachCursorAction,
   BuildCursorAction,
   MineCursorAction,
 } from './cursor-action'
@@ -20,7 +21,10 @@ import { GridContainer } from './grid-container'
 import './index.css'
 import { PointerController } from './pointer-controller'
 import { expandState, initState, State } from './state'
-import { getSelectedEntityId } from './state-utils'
+import {
+  getSelectedEntityId,
+  getSelectedRobotId,
+} from './state-utils'
 import { Vec2 } from './vec2'
 import {
   DomWorldRenderer,
@@ -65,6 +69,15 @@ async function main() {
 
   const cursorAction$ = state$.pipe(
     map((state) => {
+      const selectedRobotId = getSelectedRobotId(state)
+      if (selectedRobotId) {
+        const robot = state.world.robots[selectedRobotId]
+        invariant(robot)
+        return {
+          type: 'attach',
+          robot,
+        } satisfies AttachCursorAction
+      }
       const selectedEntityId = getSelectedEntityId(state)
       if (!selectedEntityId) {
         if ((state.cursorInventory['red'] ?? 0) > 5) {

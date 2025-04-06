@@ -65,7 +65,7 @@ function TbdButton() {
         'w-16 h-16 rounded-full bg-white',
         'flex justify-center items-center',
         'text-xs',
-        'opacity-20',
+        'opacity-10',
       )}
     >
       Tbd

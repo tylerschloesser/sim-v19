@@ -13,6 +13,7 @@ export const robotSchema = z.strictObject({
   position: ZVec2,
   radius: z.number(),
 })
+export type Robot = z.infer<typeof robotSchema>
 
 export const worldSchema = z.strictObject({
   tick: z.number(),

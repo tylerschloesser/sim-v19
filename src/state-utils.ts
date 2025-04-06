@@ -24,3 +24,10 @@ export function getSelectedEntityId(
 
   return null
 }
+
+export function getSelectedRobotId(
+  // @ts-expect-error
+  state: State,
+): string | null {
+  return null
+}
