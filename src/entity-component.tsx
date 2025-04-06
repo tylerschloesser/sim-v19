@@ -44,12 +44,35 @@ export const EntityComponent = React.memo(
       [scale$, entity],
     )
 
+    let children: React.ReactNode | null = null
+    switch (entity.type) {
+      case entityTypeSchema.enum.Resource: {
+        children = (
+          <ResourceEntityComponent color={entity.color} />
+        )
+        break
+      }
+    }
+
     return (
       <div
         data-entity-id={entityId}
         className="absolute"
         ref={ref}
-      />
+      >
+        {children}
+      </div>
     )
+  },
+)
+
+interface ResourceEntityComponentProps {
+  color: string
+}
+const ResourceEntityComponent = React.memo(
+  function ResourceEntityComponent({
+    color,
+  }: ResourceEntityComponentProps) {
+    return <>{color}!</>
   },
 )
