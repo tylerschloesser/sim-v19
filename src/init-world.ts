@@ -21,11 +21,23 @@ export async function initWorld(): Promise<World> {
   addEntity(new Vec2(2, 2), 'green')
   addEntity(new Vec2(-3, -3), 'blue')
 
+  const robots: World['robots'] = {}
+  let nextRobotId = 0
+  function addRobot(position: { x: number; y: number }) {
+    const id = `${nextRobotId++}`
+    robots[id] = {
+      id,
+      position,
+    }
+  }
+
+  addRobot(new Vec2(0.5, 0.5))
+
   return {
     tick: 0,
     entities,
     nextEntityId,
-    robots: {},
-    nextRobotId: 0,
+    robots,
+    nextRobotId,
   }
 }
