@@ -17,6 +17,7 @@ import {
   AttachCursorAction,
   BuildCursorAction,
   MineCursorAction,
+  StopCursorAction,
 } from './cursor-action'
 import { GridContainer } from './grid-container'
 import './index.css'
@@ -79,15 +80,6 @@ async function main() {
 
   const cursorAction$ = state$.pipe(
     map((state) => {
-      const selectedRobotId = getSelectedRobotId(state)
-      if (selectedRobotId) {
-        const robot = state.world.robots[selectedRobotId]
-        invariant(robot)
-        return {
-          type: 'attach',
-          robotId: robot.id,
-        } satisfies AttachCursorAction
-      }
       const selectedEntityId = getSelectedEntityId(state)
       if (!selectedEntityId) {
         if (state.attachedRobotId) {
@@ -103,11 +95,29 @@ async function main() {
         return null
       }
       if (state.attachedRobotId) {
+        const robot =
+          state.world.robots[state.attachedRobotId]
+        invariant(robot)
+        if (robot.task) {
+          return {
+            type: 'stop',
+            robotId: robot.id,
+          } satisfies StopCursorAction
+        }
         return {
           type: 'mine',
           entityId: selectedEntityId,
           robotId: state.attachedRobotId,
         } satisfies MineCursorAction
+      }
+      const selectedRobotId = getSelectedRobotId(state)
+      if (selectedRobotId) {
+        const robot = state.world.robots[selectedRobotId]
+        invariant(robot)
+        return {
+          type: 'attach',
+          robotId: robot.id,
+        } satisfies AttachCursorAction
       }
       return null
     }),

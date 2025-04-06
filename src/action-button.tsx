@@ -3,6 +3,10 @@ import clsx from 'clsx'
 import { useCallback, useContext } from 'react'
 import invariant from 'tiny-invariant'
 import { AppContext } from './app-context'
+import {
+  MineRobotTask,
+  robotTaskTypeSchema,
+} from './schema'
 
 export function ActionButton() {
   const { cursorAction$, updateState } =
@@ -15,16 +19,24 @@ export function ActionButton() {
     switch (cursorAction.type) {
       case 'mine': {
         updateState((draft) => {
-          const entity =
-            draft.world.entities[cursorAction.entityId]
-          invariant(entity)
-
           const robot =
             draft.world.robots[cursorAction.robotId]
           invariant(robot)
+          invariant(robot.task === null)
 
-          robot.inventory[entity.color] =
-            (robot.inventory[entity.color] ?? 0) + 1
+          robot.task = {
+            type: robotTaskTypeSchema.enum.Mine,
+            entityId: cursorAction.entityId,
+          } satisfies MineRobotTask
+        })
+        break
+      }
+      case 'stop': {
+        updateState((draft) => {
+          const robot =
+            draft.world.robots[cursorAction.robotId]
+          invariant(robot)
+          robot.task = null
         })
         break
       }

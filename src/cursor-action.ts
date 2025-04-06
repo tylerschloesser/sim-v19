@@ -6,6 +6,11 @@ export interface MineCursorAction {
   robotId: string
 }
 
+export interface StopCursorAction {
+  type: 'stop'
+  robotId: string
+}
+
 export interface BuildCursorAction {
   type: 'build'
 }
@@ -17,5 +22,6 @@ export interface AttachCursorAction {
 
 export type CursorAction =
   | MineCursorAction
+  | StopCursorAction
   | BuildCursorAction
   | AttachCursorAction
