@@ -14,6 +14,7 @@ export interface State {
   scale: number
   cursorSize: number
   cursor: Vec2
+  attachedRobotId: string | null
   cursorInventory: Record<string, number>
   world: World
 }
@@ -30,6 +31,7 @@ export async function initState(): Promise<State> {
     scale,
     cursorSize: scale * 1.5,
     cursor: viewport.div(2),
+    attachedRobotId: null,
     cursorInventory: {},
     world: await initWorld(),
   }
