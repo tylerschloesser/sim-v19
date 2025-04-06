@@ -36,6 +36,15 @@ async function main() {
   const canvas = document.querySelector('canvas')
   invariant(canvas)
 
+  // Prevent swipe navigation on iOS. Specifically do this on canvas because document blocks other touches.
+  canvas.addEventListener(
+    'touchstart',
+    (ev) => {
+      ev.preventDefault()
+    },
+    { passive: false },
+  )
+
   const state$ = new BehaviorSubject<State>(
     await initState(),
   )

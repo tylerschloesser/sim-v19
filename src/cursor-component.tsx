@@ -6,6 +6,7 @@ import invariant from 'tiny-invariant'
 import { AppContext } from './app-context'
 import { PointerController } from './pointer-controller'
 import { useEffectWithDestroy } from './use-effect-with-destroy'
+import { Vec2 } from './vec2'
 
 export function CursorComponent() {
   const ref = useRef<HTMLDivElement>(null)
@@ -57,6 +58,14 @@ export function CursorComponent() {
         .subscribe((drag) => {
           updateState((draft) => {
             draft.cursor = draft.cursor.add(drag)
+            if (draft.attachedRobotId) {
+              const robot =
+                draft.world.robots[draft.attachedRobotId]
+              invariant(robot)
+              robot.position = new Vec2(robot.position).add(
+                drag.div(draft.scale),
+              )
+            }
           })
         })
       return () => {
