@@ -11,6 +11,7 @@ export type Entity = z.infer<typeof entitySchema>
 export const robotSchema = z.strictObject({
   id: z.string(),
   position: ZVec2,
+  radius: z.number(),
 })
 
 export const worldSchema = z.strictObject({

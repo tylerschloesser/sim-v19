@@ -28,6 +28,7 @@ export async function initWorld(): Promise<World> {
     robots[id] = {
       id,
       position,
+      radius: 0.75,
     }
   }
 

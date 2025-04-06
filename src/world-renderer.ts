@@ -81,15 +81,15 @@ export class DomWorldRenderer implements WorldRenderer {
             robotContainer = document.createElement('div')
             container.appendChild(robotContainer)
 
-            const r = scale * 1.5
+            const r = robot.radius * scale
             robotContainer.dataset['robotId'] = robot.id
             robotContainer.style.position = 'absolute'
             robotContainer.style.border = '1px solid white'
             robotContainer.style.borderRadius = '100%'
-            robotContainer.style.width = `${r}px`
-            robotContainer.style.height = `${r}px`
-            robotContainer.style.top = `-${r / 2}px`
-            robotContainer.style.left = `-${r / 2}px`
+            robotContainer.style.width = `${r * 2}px`
+            robotContainer.style.height = `${r * 2}px`
+            robotContainer.style.top = `-${r}px`
+            robotContainer.style.left = `-${r}px`
           }
 
           const { x, y } = new Vec2(robot.position).mul(
