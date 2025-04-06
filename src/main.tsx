@@ -40,6 +40,12 @@ async function main() {
     state$.next(produce(state$.value, fn))
   }
 
+  function updateCamera(d: Vec2): void {
+    updateState((draft) => {
+      draft.camera = draft.camera.add(d)
+    })
+  }
+
   const {
     camera$,
     viewport$,
@@ -148,10 +154,8 @@ async function main() {
       if (velocity.length() < 0.01) {
         velocity = null
       } else {
-        updateState((draft) => {
-          invariant(velocity)
-          draft.camera = draft.camera.add(velocity.mul(dt))
-        })
+        const d = velocity.mul(dt)
+        updateCamera(d)
       }
     }
 
@@ -168,10 +172,7 @@ async function main() {
       map(([drag, scale]) => drag.div(scale).mul(-1)),
     )
     .subscribe((drag) => {
-      velocity = null
-      updateState((draft) => {
-        draft.camera = draft.camera.add(drag)
-      })
+      updateCamera(drag)
     })
 
   pointerController.release$
