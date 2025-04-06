@@ -51,6 +51,9 @@ export function ActionButton() {
     case 'mine':
       label = 'Mine'
       break
+    case 'stop':
+      label = 'Stop'
+      break
     case 'build':
       label = 'Build'
       break

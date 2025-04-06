@@ -1,4 +1,4 @@
-import { World } from './schema'
+import { entityTypeSchema, World } from './schema'
 import { Vec2 } from './vec2'
 
 export async function initWorld(): Promise<World> {
@@ -11,6 +11,7 @@ export async function initWorld(): Promise<World> {
   ) {
     const id = `${nextEntityId++}`
     entities[id] = {
+      type: entityTypeSchema.enum.Resource,
       id,
       position,
       color,

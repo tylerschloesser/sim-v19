@@ -1,11 +1,21 @@
 import { z } from 'zod'
 import { ZVec2 } from './vec2'
 
-export const entitySchema = z.strictObject({
+export const entityTypeSchema = z.enum(['Resource'])
+
+export const resourceEntitySchema = z.strictObject({
+  type: z.literal(entityTypeSchema.enum.Resource),
   id: z.string(),
   position: ZVec2,
   color: z.string(),
 })
+export type ResourceEntity = z.infer<
+  typeof resourceEntitySchema
+>
+
+export const entitySchema = z.discriminatedUnion('type', [
+  resourceEntitySchema,
+])
 export type Entity = z.infer<typeof entitySchema>
 
 export const robotTaskTypeSchema = z.enum(['Mine'])

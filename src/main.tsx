@@ -15,7 +15,6 @@ import { App } from './app'
 import { AppContext } from './app-context'
 import {
   AttachCursorAction,
-  BuildCursorAction,
   MineCursorAction,
   StopCursorAction,
 } from './cursor-action'
@@ -27,6 +26,7 @@ import {
   getSelectedEntityId,
   getSelectedRobotId,
 } from './state-utils'
+import { tickState } from './ticker'
 import { Vec2 } from './vec2'
 import {
   DomWorldRenderer,
@@ -53,6 +53,8 @@ async function main() {
   function updateState(fn: (draft: State) => void): void {
     state$.next(produce(state$.value, fn))
   }
+
+  self.setInterval(() => updateState(tickState), 5000)
 
   function updateCamera(d: Vec2): void {
     updateState((draft) => {
@@ -81,19 +83,6 @@ async function main() {
   const cursorAction$ = state$.pipe(
     map((state) => {
       const selectedEntityId = getSelectedEntityId(state)
-      if (!selectedEntityId) {
-        if (state.attachedRobotId) {
-          const robot =
-            state.world.robots[state.attachedRobotId]
-          invariant(robot)
-          if (robot.inventory['red'] ?? 0 >= 5) {
-            return {
-              type: 'build',
-            } satisfies BuildCursorAction
-          }
-        }
-        return null
-      }
       if (state.attachedRobotId) {
         const robot =
           state.world.robots[state.attachedRobotId]
@@ -104,11 +93,13 @@ async function main() {
             robotId: robot.id,
           } satisfies StopCursorAction
         }
-        return {
-          type: 'mine',
-          entityId: selectedEntityId,
-          robotId: state.attachedRobotId,
-        } satisfies MineCursorAction
+        if (selectedEntityId) {
+          return {
+            type: 'mine',
+            entityId: selectedEntityId,
+            robotId: state.attachedRobotId,
+          } satisfies MineCursorAction
+        }
       }
       const selectedRobotId = getSelectedRobotId(state)
       if (selectedRobotId) {
@@ -144,6 +135,15 @@ async function main() {
     ),
   )
 
+  const getRobotTask$ = state((robotId: string) =>
+    world$.pipe(
+      map((world) => world.robots[robotId]),
+      filter((value) => value !== undefined),
+      map((robot) => robot.task),
+      distinctUntilChanged(),
+    ),
+  )
+
   const context: AppContext = {
     cursorAction$: state(cursorAction$),
     cursor$: state(cursor$),
@@ -155,6 +155,7 @@ async function main() {
     updateState,
     getRobot$,
     getRobotInventory$,
+    getRobotTask$,
     robotIds$: state(robotIds$),
   }
 

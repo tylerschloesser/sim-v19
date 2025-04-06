@@ -20,12 +20,18 @@ export const RobotComponent = React.memo(
     robotId,
   }: RobotComponentProps) {
     const ref = useRef<HTMLDivElement>(null)
-    const { getRobot$, getRobotInventory$, scale$ } =
-      useContext(AppContext)
+    const {
+      getRobot$,
+      getRobotInventory$,
+      getRobotTask$,
+      scale$,
+    } = useContext(AppContext)
 
     const inventory = useStateObservable(
       getRobotInventory$(robotId),
     )
+
+    const task = useStateObservable(getRobotTask$(robotId))
 
     useEffectWithDestroy(
       (destroy$) => {
@@ -101,6 +107,18 @@ export const RobotComponent = React.memo(
             )}
           </div>
         </div>
+        {task && (
+          <div
+            className={clsx(
+              'absolute left-full top-full',
+              'text-white',
+              'pointer-events-none',
+              'text-nowrap',
+            )}
+          >
+            {task.type}
+          </div>
+        )}
       </div>
     )
   },

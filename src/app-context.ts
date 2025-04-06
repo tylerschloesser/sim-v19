@@ -22,6 +22,9 @@ export interface AppContext {
   getRobotInventory$: (
     robotId: string,
   ) => StateObservable<Robot['inventory']>
+  getRobotTask$: (
+    robotId: string,
+  ) => StateObservable<Robot['task']>
 
   robotIds$: StateObservable<string[]>
 }
