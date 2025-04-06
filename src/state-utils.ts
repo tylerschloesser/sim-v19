@@ -1,4 +1,5 @@
 import { State } from './state'
+import { Vec2 } from './vec2'
 
 export function getSelectedEntityId(
   state: State,
@@ -26,8 +27,23 @@ export function getSelectedEntityId(
 }
 
 export function getSelectedRobotId(
-  // @ts-expect-error
   state: State,
 ): string | null {
+  if (state.attachedRobotId) {
+    return null
+  }
+
+  const cursor = state.cursor
+    .sub(state.viewport.div(2))
+    .div(state.scale)
+    .add(state.camera)
+
+  for (const robot of Object.values(state.world.robots)) {
+    const d = cursor.sub(new Vec2(robot.position))
+    if (d.length() <= robot.radius) {
+      return robot.id
+    }
+  }
+
   return null
 }
