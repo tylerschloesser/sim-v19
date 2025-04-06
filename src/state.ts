@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash-es'
 import {
   BehaviorSubject,
   distinctUntilChanged,
@@ -84,9 +85,11 @@ export function expandState(
   )
   const entityIds$ = world$.pipe(
     map((world) => Object.keys(world.entities)),
+    distinctUntilChanged(isEqual),
   )
   const robotIds$ = world$.pipe(
     map((world) => Object.keys(world.robots)),
+    distinctUntilChanged(isEqual),
   )
   return {
     camera$,

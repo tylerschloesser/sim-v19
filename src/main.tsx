@@ -1,5 +1,6 @@
 import { state, Subscribe } from '@react-rxjs/core'
 import { produce } from 'immer'
+import { isEqual } from 'lodash-es'
 import { Application } from 'pixi.js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -92,18 +93,19 @@ async function main() {
             robotId: robot.id,
           } satisfies StopCursorAction
         }
-        if ((robot.inventory['red'] ?? 0) >= 5) {
-          return {
-            type: 'build',
-            entityType: entityTypeSchema.enum.Furnace,
-          } satisfies BuildCursorAction
-        }
         if (selectedEntityId) {
           return {
             type: 'mine',
             entityId: selectedEntityId,
             robotId: state.attachedRobotId,
           } satisfies MineCursorAction
+        } else {
+          if ((robot.inventory['red'] ?? 0) >= 5) {
+            return {
+              type: 'build',
+              entityType: entityTypeSchema.enum.Furnace,
+            } satisfies BuildCursorAction
+          }
         }
       }
       const selectedRobotId = getSelectedRobotId(state)
@@ -117,7 +119,7 @@ async function main() {
       }
       return null
     }),
-    distinctUntilChanged(),
+    distinctUntilChanged(isEqual),
   )
 
   const container = document.getElementById('root')

@@ -30,7 +30,7 @@ export async function initWorld(): Promise<World> {
       id,
       position,
       radius: 0.75,
-      inventory: {},
+      inventory: { red: 5 },
       task: null,
     }
   }

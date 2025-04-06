@@ -10,9 +10,12 @@ import { RobotComponent } from './robot-component'
 import { WorldComponent } from './world-component'
 
 export function App() {
-  const { entityIds$, robotIds$ } = useContext(AppContext)
+  const { entityIds$, robotIds$, cursorAction$ } =
+    useContext(AppContext)
   const entityIds = useStateObservable(entityIds$)
   const robotIds = useStateObservable(robotIds$)
+  const cursorAction = useStateObservable(cursorAction$)
+  console.log(cursorAction)
   return (
     <>
       <WorldComponent>
