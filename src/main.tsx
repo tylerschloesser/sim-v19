@@ -104,6 +104,7 @@ async function main() {
             return {
               type: 'build',
               entityType: entityTypeSchema.enum.Furnace,
+              position: new Vec2(robot.position).floor(),
             } satisfies BuildCursorAction
           }
         }

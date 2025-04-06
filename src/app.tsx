@@ -4,9 +4,11 @@ import { useCallback, useContext } from 'react'
 import invariant from 'tiny-invariant'
 import { ActionButton } from './action-button'
 import { AppContext } from './app-context'
+import { BuildCursorAction } from './cursor-action'
 import { CursorComponent } from './cursor-component'
 import { EntityComponent } from './entity-component'
 import { RobotComponent } from './robot-component'
+import { entityTypeSchema } from './schema'
 import { WorldComponent } from './world-component'
 
 export function App() {
@@ -28,6 +30,11 @@ export function App() {
         {robotIds.map((robotId) => (
           <RobotComponent robotId={robotId} key={robotId} />
         ))}
+        {cursorAction?.type === 'build' && (
+          <BuildCursorActionComponent
+            cursorAction={cursorAction}
+          />
+        )}
       </WorldComponent>
       <div className="absolute bottom-0 w-full flex justify-center">
         <div
@@ -40,6 +47,39 @@ export function App() {
       </div>
       <CursorComponent />
     </>
+  )
+}
+
+interface BuildCursorActionComponentProps {
+  cursorAction: BuildCursorAction
+}
+
+function BuildCursorActionComponent({
+  cursorAction,
+}: BuildCursorActionComponentProps) {
+  const { scale$ } = useContext(AppContext)
+  const scale = useStateObservable(scale$)
+
+  const translate = cursorAction.position.mul(scale)
+
+  const backgroundColor =
+    cursorAction.entityType ===
+    entityTypeSchema.enum.Furnace
+      ? 'red'
+      : 'white'
+
+  return (
+    <div
+      className={clsx('absolute opacity-50', 'text-xs')}
+      style={{
+        backgroundColor,
+        width: `${scale}px`,
+        height: `${scale}px`,
+        transform: `translate(${translate.x}px, ${translate.y}px)`,
+      }}
+    >
+      {cursorAction.entityType}
+    </div>
   )
 }
 

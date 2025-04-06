@@ -1,4 +1,5 @@
 import { EntityType } from './schema'
+import { Vec2 } from './vec2'
 
 export type CursorActionType = 'mine' | 'build' | 'attach'
 
@@ -16,6 +17,7 @@ export interface StopCursorAction {
 export interface BuildCursorAction {
   type: 'build'
   entityType: EntityType
+  position: Vec2
 }
 
 export interface AttachCursorAction {
