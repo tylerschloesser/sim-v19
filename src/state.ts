@@ -25,6 +25,7 @@ export async function initState(): Promise<State> {
     window.innerHeight,
   )
   const scale = 50
+  const world = await initWorld()
   return {
     camera: new Vec2(0.5, 0.5),
     viewport,
@@ -33,7 +34,7 @@ export async function initState(): Promise<State> {
     cursor: viewport.div(2),
     attachedRobotId: null,
     cursorInventory: {},
-    world: await initWorld(),
+    world,
   }
 }
 
