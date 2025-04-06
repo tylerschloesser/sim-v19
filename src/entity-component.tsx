@@ -1,10 +1,6 @@
+import { useStateObservable } from '@react-rxjs/core'
 import React, { useContext, useRef } from 'react'
-import {
-  combineLatest,
-  distinctUntilChanged,
-  map,
-  takeUntil,
-} from 'rxjs'
+import { takeUntil } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { AppContext } from './app-context'
 import { entityTypeSchema } from './schema'
@@ -21,16 +17,20 @@ export const EntityComponent = React.memo(
   }: EntityComponentProps) {
     const ref = useRef<HTMLDivElement>(null)
     const { getEntity$, scale$ } = useContext(AppContext)
+    const entity = useStateObservable(getEntity$(entityId))
 
     useEffectWithDestroy(
       (destroy$) => {
-        const entity$ = getEntity$(entityId)
-        combineLatest([entity$, scale$])
+        scale$
           .pipe(takeUntil(destroy$))
-          .subscribe(([entity, scale]) => {
+          .subscribe((scale) => {
             invariant(ref.current)
             ref.current.style.width = `${scale}px`
             ref.current.style.height = `${scale}px`
+            const { x, y } = new Vec2(entity.position).mul(
+              scale,
+            )
+            ref.current.style.transform = `translate(${x}px, ${y}px)`
 
             switch (entity.type) {
               case entityTypeSchema.enum.Resource: {
@@ -41,25 +41,7 @@ export const EntityComponent = React.memo(
             }
           })
       },
-      [getEntity$],
-    )
-
-    useEffectWithDestroy(
-      (destroy$) => {
-        const entity$ = getEntity$(entityId)
-        const position$ = entity$.pipe(
-          map((entity) => entity.position),
-          distinctUntilChanged(),
-        )
-        combineLatest([position$, scale$])
-          .pipe(takeUntil(destroy$))
-          .subscribe(([position, scale]) => {
-            invariant(ref.current)
-            const { x, y } = new Vec2(position).mul(scale)
-            ref.current.style.transform = `translate(${x}px, ${y}px)`
-          })
-      },
-      [getEntity$],
+      [scale$, entity],
     )
 
     return (
