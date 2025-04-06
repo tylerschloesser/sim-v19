@@ -16,7 +16,6 @@ export interface State {
   cursorSize: number
   cursor: Vec2
   attachedRobotId: string | null
-  cursorInventory: Record<string, number>
   world: World
 }
 
@@ -38,7 +37,6 @@ export async function initState(): Promise<State> {
     cursorSize: scale * 1.5,
     cursor: viewport.div(2),
     attachedRobotId,
-    cursorInventory: {},
     world,
   }
 }
@@ -52,8 +50,8 @@ export function expandState(
   cursorSize$: Observable<number>
   cursor$: Observable<Vec2>
   attachedRobotId$: Observable<string | null>
-  cursorInventory$: Observable<Record<string, number>>
   world$: Observable<World>
+  robotIds$: Observable<string[]>
 } {
   const camera$ = state$.pipe(
     map((state) => state.camera),
@@ -79,13 +77,12 @@ export function expandState(
     map((state) => state.attachedRobotId),
     distinctUntilChanged(),
   )
-  const cursorInventory$ = state$.pipe(
-    map((state) => state.cursorInventory),
-    distinctUntilChanged(),
-  )
   const world$ = state$.pipe(
     map((state) => state.world),
     distinctUntilChanged(),
+  )
+  const robotIds$ = world$.pipe(
+    map((world) => Object.keys(world.robots)),
   )
   return {
     camera$,
@@ -94,7 +91,7 @@ export function expandState(
     cursorSize$,
     cursor$,
     attachedRobotId$,
-    cursorInventory$,
     world$,
+    robotIds$,
   }
 }

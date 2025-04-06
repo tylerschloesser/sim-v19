@@ -5,8 +5,12 @@ import invariant from 'tiny-invariant'
 import { ActionButton } from './action-button'
 import { AppContext } from './app-context'
 import { CursorComponent } from './cursor-component'
+import { RobotComponent } from './robot-component'
+import { WorldComponent } from './world-component'
 
 export function App() {
+  const { robotIds$ } = useContext(AppContext)
+  const robotIds = useStateObservable(robotIds$)
   return (
     <>
       <div className="absolute bottom-0 w-full flex justify-center">
@@ -19,6 +23,11 @@ export function App() {
         </div>
       </div>
       <CursorComponent />
+      <WorldComponent>
+        {robotIds.map((robotId) => (
+          <RobotComponent robotId={robotId} key={robotId} />
+        ))}
+      </WorldComponent>
     </>
   )
 }
@@ -42,7 +51,7 @@ function RobotButton() {
     updateState((draft) => {
       if (cursorAction?.type === 'attach') {
         const robot =
-          draft.world.robots[cursorAction.robot.id]
+          draft.world.robots[cursorAction.robotId]
         invariant(robot)
 
         const cursor = draft.cursor

@@ -1,10 +1,9 @@
-import { Entity, Robot } from './schema'
-
 export type CursorActionType = 'mine' | 'build' | 'attach'
 
 export interface MineCursorAction {
   type: 'mine'
-  entity: Entity
+  entityId: string
+  robotId: string
 }
 
 export interface BuildCursorAction {
@@ -13,7 +12,7 @@ export interface BuildCursorAction {
 
 export interface AttachCursorAction {
   type: 'attach'
-  robot: Robot
+  robotId: string
 }
 
 export type CursorAction =

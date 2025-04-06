@@ -18,7 +18,7 @@ interface DomWorldRendererState {
   container: HTMLElement
   world$: Observable<World>
   entityIdToContainer: Map<string, HTMLElement>
-  robotIdToContainer: Map<string, HTMLElement>
+  // robotIdToContainer: Map<string, HTMLElement>
 }
 
 export class DomWorldRenderer implements WorldRenderer {
@@ -70,40 +70,40 @@ export class DomWorldRenderer implements WorldRenderer {
       },
     )
 
-    const robotIdToContainer = new Map<
-      string,
-      HTMLElement
-    >()
+    // const robotIdToContainer = new Map<
+    //   string,
+    //   HTMLElement
+    // >()
 
-    combineLatest([world$, scale$]).subscribe(
-      ([world, scale]) => {
-        for (const robot of Object.values(world.robots)) {
-          let robotContainer = robotIdToContainer.get(
-            robot.id,
-          )
-          if (!robotContainer) {
-            robotContainer = document.createElement('div')
-            robotIdToContainer.set(robot.id, robotContainer)
-            container.appendChild(robotContainer)
+    // combineLatest([world$, scale$]).subscribe(
+    //   ([world, scale]) => {
+    //     for (const robot of Object.values(world.robots)) {
+    //       let robotContainer = robotIdToContainer.get(
+    //         robot.id,
+    //       )
+    //       if (!robotContainer) {
+    //         robotContainer = document.createElement('div')
+    //         robotIdToContainer.set(robot.id, robotContainer)
+    //         container.appendChild(robotContainer)
 
-            const r = robot.radius * scale
-            robotContainer.dataset['robotId'] = robot.id
-            robotContainer.style.position = 'absolute'
-            robotContainer.style.border = '1px solid white'
-            robotContainer.style.borderRadius = '100%'
-            robotContainer.style.width = `${r * 2}px`
-            robotContainer.style.height = `${r * 2}px`
-            robotContainer.style.top = `-${r}px`
-            robotContainer.style.left = `-${r}px`
-          }
+    //         const r = robot.radius * scale
+    //         robotContainer.dataset['robotId'] = robot.id
+    //         robotContainer.style.position = 'absolute'
+    //         robotContainer.style.border = '1px solid white'
+    //         robotContainer.style.borderRadius = '100%'
+    //         robotContainer.style.width = `${r * 2}px`
+    //         robotContainer.style.height = `${r * 2}px`
+    //         robotContainer.style.top = `-${r}px`
+    //         robotContainer.style.left = `-${r}px`
+    //       }
 
-          const { x, y } = new Vec2(robot.position).mul(
-            scale,
-          )
-          robotContainer.style.transform = `translate(${x}px, ${y}px)`
-        }
-      },
-    )
+    //       const { x, y } = new Vec2(robot.position).mul(
+    //         scale,
+    //       )
+    //       robotContainer.style.transform = `translate(${x}px, ${y}px)`
+    //     }
+    //   },
+    // )
 
     combineLatest([camera$, scale$, viewport$]).subscribe(
       ([camera, scale, viewport]) => {
@@ -118,7 +118,7 @@ export class DomWorldRenderer implements WorldRenderer {
       container,
       world$,
       entityIdToContainer,
-      robotIdToContainer,
+      // robotIdToContainer,
     }
   }
 }

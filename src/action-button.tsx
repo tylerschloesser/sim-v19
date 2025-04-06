@@ -14,10 +14,17 @@ export function ActionButton() {
 
     switch (cursorAction.type) {
       case 'mine': {
-        const { entity } = cursorAction
         updateState((draft) => {
-          draft.cursorInventory[entity.color] =
-            (draft.cursorInventory[entity.color] ?? 0) + 1
+          const entity =
+            draft.world.entities[cursorAction.entityId]
+          invariant(entity)
+
+          const robot =
+            draft.world.robots[cursorAction.robotId]
+          invariant(robot)
+
+          robot.inventory[entity.color] =
+            (robot.inventory[entity.color] ?? 0) + 1
         })
         break
       }

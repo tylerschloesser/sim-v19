@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client'
 import {
   BehaviorSubject,
   distinctUntilChanged,
+  filter,
   map,
   withLatestFrom,
 } from 'rxjs'
@@ -63,8 +64,8 @@ async function main() {
     cursorSize$,
     cursor$,
     attachedRobotId$,
-    cursorInventory$,
     world$,
+    robotIds$,
   } = expandState(state$)
 
   const cursorAction$ = state$.pipe(
@@ -75,24 +76,31 @@ async function main() {
         invariant(robot)
         return {
           type: 'attach',
-          robot,
+          robotId: robot.id,
         } satisfies AttachCursorAction
       }
       const selectedEntityId = getSelectedEntityId(state)
       if (!selectedEntityId) {
-        if ((state.cursorInventory['red'] ?? 0) > 5) {
-          return {
-            type: 'build',
-          } satisfies BuildCursorAction
+        if (state.attachedRobotId) {
+          const robot =
+            state.world.robots[state.attachedRobotId]
+          invariant(robot)
+          if (robot.inventory['red'] ?? 0 >= 5) {
+            return {
+              type: 'build',
+            } satisfies BuildCursorAction
+          }
         }
         return null
       }
-      const entity = state.world.entities[selectedEntityId]
-      invariant(entity)
-      return {
-        type: 'mine',
-        entity,
-      } satisfies MineCursorAction
+      if (state.attachedRobotId) {
+        return {
+          type: 'mine',
+          entityId: selectedEntityId,
+          robotId: state.attachedRobotId,
+        } satisfies MineCursorAction
+      }
+      return null
     }),
     distinctUntilChanged(),
   )
@@ -100,16 +108,35 @@ async function main() {
   const container = document.getElementById('root')
   invariant(container)
 
+  const getRobot$ = state((robotId: string) =>
+    world$.pipe(
+      map((world) => world.robots[robotId]),
+      filter((value) => value !== undefined),
+      distinctUntilChanged(),
+    ),
+  )
+
+  const getRobotInventory$ = state((robotId: string) =>
+    world$.pipe(
+      map((world) => world.robots[robotId]),
+      filter((value) => value !== undefined),
+      map((robot) => robot.inventory),
+      distinctUntilChanged(),
+    ),
+  )
+
   const context: AppContext = {
     cursorAction$: state(cursorAction$),
     cursor$: state(cursor$),
     cursorSize$: state(cursorSize$),
-    cursorInventory$: state(cursorInventory$),
     attachedRobotId$: state(attachedRobotId$),
     camera$: state(camera$),
     viewport$: state(viewport$),
     scale$: state(scale$),
     updateState,
+    getRobot$,
+    getRobotInventory$,
+    robotIds$: state(robotIds$),
   }
 
   createRoot(container).render(

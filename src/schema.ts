@@ -12,6 +12,7 @@ export const robotSchema = z.strictObject({
   id: z.string(),
   position: ZVec2,
   radius: z.number(),
+  inventory: z.record(z.string(), z.number()),
 })
 export type Robot = z.infer<typeof robotSchema>
 

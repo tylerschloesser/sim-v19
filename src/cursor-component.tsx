@@ -1,6 +1,6 @@
 import { useStateObservable } from '@react-rxjs/core'
 import clsx from 'clsx'
-import { Fragment, useContext, useRef } from 'react'
+import { useContext, useRef } from 'react'
 import { takeUntil } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { AppContext } from './app-context'
@@ -14,14 +14,10 @@ export function CursorComponent() {
     cursorAction$,
     cursor$,
     cursorSize$,
-    cursorInventory$,
     updateState,
   } = useContext(AppContext)
 
   const cursorAction = useStateObservable(cursorAction$)
-  const cursorInventory = useStateObservable(
-    cursorInventory$,
-  )
 
   useEffectWithDestroy(
     (destroy$) => {
@@ -84,39 +80,9 @@ export function CursorComponent() {
             'text-nowrap',
           )}
         >
-          Entity: {cursorAction.entity.id}
+          Entity: {cursorAction.entityId}
         </div>
       )}
-      <div
-        className={clsx(
-          'absolute left-0 bottom-full',
-          'text-white',
-          'pointer-events-none',
-          'text-nowrap',
-        )}
-      >
-        <div
-          className={clsx(
-            'grid grid-cols-2 gap-1',
-            'items-center',
-            'font-mono text-xs',
-          )}
-        >
-          {Object.entries(cursorInventory).map(
-            ([color, count]) => (
-              <Fragment key={color}>
-                <div
-                  style={{
-                    backgroundColor: color,
-                  }}
-                  className={clsx('w-4 h-4 rounded-full')}
-                ></div>
-                <div>{count}</div>
-              </Fragment>
-            ),
-          )}
-        </div>
-      </div>
     </div>
   )
 }

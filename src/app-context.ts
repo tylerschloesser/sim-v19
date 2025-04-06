@@ -1,6 +1,7 @@
 import { StateObservable } from '@react-rxjs/core'
 import React from 'react'
 import { CursorAction } from './cursor-action'
+import { Robot } from './schema'
 import { State } from './state'
 import { Vec2 } from './vec2'
 
@@ -9,7 +10,6 @@ export interface AppContext {
 
   cursor$: StateObservable<Vec2>
   cursorSize$: StateObservable<number>
-  cursorInventory$: StateObservable<Record<string, number>>
   attachedRobotId$: StateObservable<string | null>
 
   camera$: StateObservable<Vec2>
@@ -17,6 +17,13 @@ export interface AppContext {
   scale$: StateObservable<number>
 
   updateState(fn: (draft: State) => void): void
+
+  getRobot$: (robotId: string) => StateObservable<Robot>
+  getRobotInventory$: (
+    robotId: string,
+  ) => StateObservable<Robot['inventory']>
+
+  robotIds$: StateObservable<string[]>
 }
 
 export const AppContext = React.createContext<AppContext>(
