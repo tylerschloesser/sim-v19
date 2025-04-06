@@ -25,5 +25,7 @@ export async function initWorld(): Promise<World> {
     tick: 0,
     entities,
     nextEntityId,
+    robots: {},
+    nextRobotId: 0,
   }
 }
