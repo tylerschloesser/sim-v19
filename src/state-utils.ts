@@ -1,5 +1,15 @@
 import { isInteger } from 'lodash-es'
 import invariant from 'tiny-invariant'
+import { CursorAction } from './cursor-action'
+import { getRecipe } from './recipe'
+import {
+  Entity,
+  entityTypeSchema,
+  FurnaceEntity,
+  MineRobotTask,
+  robotTaskTypeSchema,
+  StorageEntity,
+} from './schema'
 import { State } from './state'
 import { Vec2 } from './vec2'
 
@@ -93,4 +103,81 @@ export function inventoryHasMany(
     }
   }
   return true
+}
+
+export function handleAction(
+  draft: State,
+  action: CursorAction,
+): void {
+  switch (action.type) {
+    case 'attach': {
+      const robot = draft.world.robots[action.robotId]
+      invariant(robot)
+      const cursor = draft.cursor
+        .sub(draft.viewport.div(2))
+        .div(draft.scale)
+        .add(draft.camera)
+      robot.position = cursor
+      draft.attachedRobotId = robot.id
+      break
+    }
+    case 'detach': {
+      invariant(draft.attachedRobotId)
+      draft.attachedRobotId = null
+      break
+    }
+    case 'mine': {
+      const robot = draft.world.robots[action.robotId]
+      invariant(robot)
+      invariant(robot.task === null)
+
+      robot.task = {
+        type: robotTaskTypeSchema.enum.Mine,
+        entityId: action.entityId,
+      } satisfies MineRobotTask
+      break
+    }
+    case 'stop': {
+      const robot = draft.world.robots[action.robotId]
+      invariant(robot)
+      invariant(robot.task)
+      robot.task = null
+      break
+    }
+    case 'build': {
+      const robot = draft.world.robots[action.robotId]
+      invariant(robot)
+      const recipe = getRecipe(action.entityType)
+      inventorySubMany(robot.inventory, recipe)
+      let entity: Entity
+      const id = `${draft.world.nextEntityId++}`
+      const position = action.position
+      switch (action.entityType) {
+        case entityTypeSchema.enum.Furnace: {
+          entity = {
+            id,
+            type: entityTypeSchema.enum.Furnace,
+            position,
+            input: {},
+            output: {},
+          } satisfies FurnaceEntity
+          break
+        }
+        case entityTypeSchema.enum.Storage: {
+          entity = {
+            id,
+            type: entityTypeSchema.enum.Storage,
+            position,
+            inventory: {},
+          } satisfies StorageEntity
+          break
+        }
+        default: {
+          invariant(false, 'TODO')
+        }
+      }
+      draft.world.entities[id] = entity
+      break
+    }
+  }
 }

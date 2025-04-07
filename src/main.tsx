@@ -1,6 +1,5 @@
 import { state, Subscribe } from '@react-rxjs/core'
 import { produce } from 'immer'
-import { isEqual } from 'lodash-es'
 import { Application } from 'pixi.js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -14,23 +13,11 @@ import {
 import invariant from 'tiny-invariant'
 import { App } from './app'
 import { AppContext } from './app-context'
-import {
-  AttachCursorAction,
-  BuildCursorAction,
-  MineCursorAction,
-  StopCursorAction,
-} from './cursor-action'
 import { GridContainer } from './grid-container'
 import './index.css'
+import { initActions } from './init-actions'
 import { PointerController } from './pointer-controller'
-import { getRecipe } from './recipe'
-import { entityTypeSchema } from './schema'
 import { expandState, initState, State } from './state'
-import {
-  getSelectedEntityId,
-  getSelectedRobotId,
-  inventoryHasMany,
-} from './state-utils'
 import { tickState } from './ticker'
 import { Vec2 } from './vec2'
 
@@ -82,67 +69,7 @@ async function main() {
     robotIds$,
   } = expandState(state$)
 
-  const cursorAction$ = state$.pipe(
-    map((state) => {
-      const selectedEntityId = getSelectedEntityId(state)
-      if (state.attachedRobotId) {
-        const robot =
-          state.world.robots[state.attachedRobotId]
-        invariant(robot)
-        if (robot.task) {
-          return {
-            type: 'stop',
-            robotId: robot.id,
-          } satisfies StopCursorAction
-        }
-        if (selectedEntityId) {
-          return {
-            type: 'mine',
-            entityId: selectedEntityId,
-            robotId: state.attachedRobotId,
-          } satisfies MineCursorAction
-        } else {
-          if (
-            inventoryHasMany(
-              robot.inventory,
-              getRecipe(entityTypeSchema.enum.Furnace),
-            )
-          ) {
-            return {
-              type: 'build',
-              robotId: robot.id,
-              entityType: entityTypeSchema.enum.Furnace,
-              position: new Vec2(robot.position).floor(),
-            } satisfies BuildCursorAction
-          }
-          if (
-            inventoryHasMany(
-              robot.inventory,
-              getRecipe(entityTypeSchema.enum.Storage),
-            )
-          ) {
-            return {
-              type: 'build',
-              robotId: robot.id,
-              entityType: entityTypeSchema.enum.Storage,
-              position: new Vec2(robot.position).floor(),
-            } satisfies BuildCursorAction
-          }
-        }
-      }
-      const selectedRobotId = getSelectedRobotId(state)
-      if (selectedRobotId) {
-        const robot = state.world.robots[selectedRobotId]
-        invariant(robot)
-        return {
-          type: 'attach',
-          robotId: robot.id,
-        } satisfies AttachCursorAction
-      }
-      return null
-    }),
-    distinctUntilChanged(isEqual),
-  )
+  const actions$ = initActions(state$)
 
   const container = document.getElementById('root')
   invariant(container)
@@ -181,8 +108,17 @@ async function main() {
     ),
   )
 
+  const buildAction$ = actions$.pipe(
+    map(
+      (actions) =>
+        actions.find((action) => action.type === 'build') ??
+        null,
+    ),
+  )
+
   const context: AppContext = {
-    cursorAction$: state(cursorAction$),
+    actions$: state(actions$),
+    buildAction$: state(buildAction$),
     cursor$: state(cursor$),
     cursorSize$: state(cursorSize$),
     attachedRobotId$: state(attachedRobotId$),
