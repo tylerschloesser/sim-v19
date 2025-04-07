@@ -80,7 +80,7 @@ function BuildCursorActionComponent({
       break
     }
     case entityTypeSchema.enum.Storage: {
-      children = <StorageEntityComponent />
+      children = <StorageEntityComponent inventory={{}} />
       break
     }
     default: {

@@ -1,19 +1,34 @@
 import React from 'react'
 
-export interface StorageEntityComponentProps {}
+export interface StorageEntityComponentProps {
+  inventory: Record<string, number>
+}
 
 export const StorageEntityComponent = React.memo(
-  function StorageEntityComponent({}: StorageEntityComponentProps) {
+  function StorageEntityComponent({
+    inventory,
+  }: StorageEntityComponentProps) {
     return (
-      <svg viewBox={`0 0 1 1`} className="w-full h-full">
-        <rect
-          x={0}
-          y={0}
-          width={1}
-          height={1}
-          fill="green"
-        />
-      </svg>
+      <div
+        className="w-full h-full flex justify-center items-center"
+        style={{ background: 'green' }}
+      >
+        <div className="grid grid-cols-2 gap-1">
+          {Object.entries(inventory).map(
+            ([color, count]) => (
+              <React.Fragment key={color}>
+                <div
+                  style={{
+                    backgroundColor: color,
+                  }}
+                  className="w-4 h-4 rounded-full"
+                ></div>
+                <div>{count}</div>
+              </React.Fragment>
+            ),
+          )}
+        </div>
+      </div>
     )
   },
 )

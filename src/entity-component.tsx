@@ -52,7 +52,11 @@ export const EntityComponent = React.memo(
         break
       }
       case entityTypeSchema.enum.Storage: {
-        children = <StorageEntityComponent />
+        children = (
+          <StorageEntityComponent
+            inventory={entity.inventory}
+          />
+        )
         break
       }
       default: {
