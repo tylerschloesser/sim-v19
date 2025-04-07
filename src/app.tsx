@@ -10,6 +10,7 @@ import { EntityComponent } from './entity-component'
 import { FurnaceEntityComponent } from './furnace-entity-component'
 import { RobotComponent } from './robot-component'
 import { entityTypeSchema } from './schema'
+import { StorageEntityComponent } from './storage-entity-component'
 import { WorldComponent } from './world-component'
 
 export function App() {
@@ -66,6 +67,10 @@ function BuildCursorActionComponent({
   switch (cursorAction.entityType) {
     case entityTypeSchema.enum.Furnace: {
       children = <FurnaceEntityComponent />
+      break
+    }
+    case entityTypeSchema.enum.Storage: {
+      children = <StorageEntityComponent />
       break
     }
     default: {
