@@ -109,6 +109,14 @@ async function main() {
               position: new Vec2(robot.position).floor(),
             } satisfies BuildCursorAction
           }
+          if (inventoryHas(robot.inventory, 'green', 5)) {
+            return {
+              type: 'build',
+              robotId: robot.id,
+              entityType: entityTypeSchema.enum.Storage,
+              position: new Vec2(robot.position).floor(),
+            } satisfies BuildCursorAction
+          }
         }
       }
       const selectedRobotId = getSelectedRobotId(state)

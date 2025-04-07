@@ -7,6 +7,7 @@ import { AppContext } from './app-context'
 import { BuildCursorAction } from './cursor-action'
 import { CursorComponent } from './cursor-component'
 import { EntityComponent } from './entity-component'
+import { FurnaceEntityComponent } from './furnace-entity-component'
 import { RobotComponent } from './robot-component'
 import { entityTypeSchema } from './schema'
 import { WorldComponent } from './world-component'
@@ -17,7 +18,6 @@ export function App() {
   const entityIds = useStateObservable(entityIds$)
   const robotIds = useStateObservable(robotIds$)
   const cursorAction = useStateObservable(cursorAction$)
-  console.log(cursorAction)
   return (
     <>
       <WorldComponent>
@@ -62,23 +62,27 @@ function BuildCursorActionComponent({
 
   const translate = cursorAction.position.mul(scale)
 
-  const backgroundColor =
-    cursorAction.entityType ===
-    entityTypeSchema.enum.Furnace
-      ? 'red'
-      : 'white'
+  let children: React.ReactNode
+  switch (cursorAction.entityType) {
+    case entityTypeSchema.enum.Furnace: {
+      children = <FurnaceEntityComponent />
+      break
+    }
+    default: {
+      invariant(false, 'TODO')
+    }
+  }
 
   return (
     <div
       className={clsx('absolute opacity-50', 'text-xs')}
       style={{
-        backgroundColor,
         width: `${scale}px`,
         height: `${scale}px`,
         transform: `translate(${translate.x}px, ${translate.y}px)`,
       }}
     >
-      {cursorAction.entityType}
+      {children}
     </div>
   )
 }
