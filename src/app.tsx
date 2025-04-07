@@ -48,8 +48,8 @@ const ActionBar = React.memo(function ActionBar() {
   const { actions$ } = useContext(AppContext)
   const actions = useStateObservable(actions$)
   return (
-    <div className="absolute bottom-0 w-full flex justify-center">
-      <div className={clsx('flex items-center gap-8 p-8')}>
+    <div className="absolute bottom-0 w-full pb-8">
+      <div className="flex justify-evenly items-center">
         <ActionButton
           type="secondary"
           action={actions[1]}
