@@ -36,6 +36,14 @@ export interface DropCursorAction {
   count: number
 }
 
+export interface PickupCursorAction {
+  type: 'pickup'
+  entityId: string
+  robotId: string
+  color: string
+  count: number
+}
+
 export type CursorAction =
   | MineCursorAction
   | StopCursorAction
@@ -43,3 +51,4 @@ export type CursorAction =
   | AttachCursorAction
   | DetachCursorAction
   | DropCursorAction
+  | PickupCursorAction

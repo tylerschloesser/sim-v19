@@ -8,6 +8,7 @@ import {
   DetachCursorAction,
   DropCursorAction,
   MineCursorAction,
+  PickupCursorAction,
   StopCursorAction,
 } from './cursor-action'
 import { getRecipe } from './recipe'
@@ -81,6 +82,21 @@ export function initActions(
               break
             }
             case entityTypeSchema.enum.Storage: {
+              if (!inventoryEmpty(entity.inventory)) {
+                const color = Object.keys(
+                  entity.inventory,
+                )[0]
+                invariant(color)
+                const count = entity.inventory[color]
+                invariant(count)
+                actions.push({
+                  type: 'pickup',
+                  entityId: selectedEntityId,
+                  robotId: state.attachedRobotId,
+                  color,
+                  count,
+                } satisfies PickupCursorAction)
+              }
               if (!inventoryEmpty(robot.inventory)) {
                 const color = Object.keys(
                   robot.inventory,

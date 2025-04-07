@@ -52,6 +52,20 @@ export function ActionButton({
         </span>
       )
       break
+    case 'pickup':
+      label = (
+        <span className="text-xs flex flex-col gap-1">
+          <span>Pickup</span>
+          <span className="flex gap-1 items-center">
+            {action.count}
+            <span
+              className="w-4 h-4 rounded-full"
+              style={{ backgroundColor: action.color }}
+            />
+          </span>
+        </span>
+      )
+      break
     default:
       break
   }

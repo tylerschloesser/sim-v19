@@ -10,10 +10,10 @@ export const StorageEntityComponent = React.memo(
   }: StorageEntityComponentProps) {
     return (
       <div
-        className="w-full h-full flex justify-center items-center"
+        className="w-full h-full flex justify-center items-center text-xs"
         style={{ background: 'green' }}
       >
-        <div className="grid grid-cols-2 gap-1">
+        <div className="grid grid-cols-2 gap-1 items-center">
           {Object.entries(inventory).map(
             ([color, count]) => (
               <React.Fragment key={color}>
