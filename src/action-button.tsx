@@ -21,7 +21,7 @@ export function ActionButton({
     updateState((draft) => handleAction(draft, action))
   }, [action, updateState])
 
-  let label = ''
+  let label: React.ReactNode | string | null = null
   switch (action?.type) {
     case 'attach':
       label = 'Attach'
@@ -38,6 +38,20 @@ export function ActionButton({
     case 'build':
       label = 'Build'
       break
+    case 'drop':
+      label = (
+        <span className="text-xs flex flex-col gap-1">
+          <span>Drop</span>
+          <span className="flex gap-1 items-center">
+            {action.count}
+            <span
+              className="w-4 h-4 rounded-full"
+              style={{ backgroundColor: action.color }}
+            />
+          </span>
+        </span>
+      )
+      break
     default:
       break
   }
@@ -47,14 +61,14 @@ export function ActionButton({
       onClick={onClick}
       disabled={!action}
       className={clsx(
-        !action && 'opacity-50',
+        !action && 'opacity-20',
         action && 'pointer-events-auto cursor-pointer',
         'bg-white text-black rounded-full aspect-square',
         'flex justify-center items-center',
         type === 'primary' ? 'w-20 h-20' : 'w-16 h-16',
       )}
     >
-      <span>{label}</span>
+      {label}
     </button>
   )
 }

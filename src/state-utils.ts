@@ -105,6 +105,12 @@ export function inventoryHasMany(
   return true
 }
 
+export function inventoryEmpty(
+  inventory: Record<string, number>,
+): boolean {
+  return Object.keys(inventory).length === 0
+}
+
 export function handleAction(
   draft: State,
   action: CursorAction,

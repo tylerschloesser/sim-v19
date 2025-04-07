@@ -5,6 +5,8 @@ import {
   AttachCursorAction,
   BuildCursorAction,
   CursorAction,
+  DetachCursorAction,
+  DropCursorAction,
   MineCursorAction,
   StopCursorAction,
 } from './cursor-action'
@@ -17,6 +19,7 @@ import { State } from './state'
 import {
   getSelectedEntityId,
   getSelectedRobotId,
+  inventoryEmpty,
   inventoryHasMany,
 } from './state-utils'
 import { Vec2 } from './vec2'
@@ -74,8 +77,25 @@ export function initActions(
                   entityId: selectedEntityId,
                   robotId: state.attachedRobotId,
                 } satisfies MineCursorAction)
-                break
               }
+              break
+            }
+            case entityTypeSchema.enum.Storage: {
+              if (!inventoryEmpty(robot.inventory)) {
+                const color = Object.keys(
+                  robot.inventory,
+                )[0]
+                invariant(color)
+                const count = robot.inventory[color]
+                invariant(count)
+                actions.push({
+                  type: 'drop',
+                  robotId: state.attachedRobotId,
+                  color,
+                  count,
+                } satisfies DropCursorAction)
+              }
+              break
             }
           }
         } else {
@@ -94,6 +114,10 @@ export function initActions(
             }
           }
         }
+
+        actions.push({
+          type: 'detach',
+        } satisfies DetachCursorAction)
       }
       return actions
     }),

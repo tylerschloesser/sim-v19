@@ -1,12 +1,6 @@
 import { EntityType } from './schema'
 import { Vec2 } from './vec2'
 
-export type CursorActionType =
-  | 'mine'
-  | 'build'
-  | 'attach'
-  | 'detach'
-
 export interface MineCursorAction {
   type: 'mine'
   entityId: string
@@ -34,9 +28,17 @@ export interface DetachCursorAction {
   type: 'detach'
 }
 
+export interface DropCursorAction {
+  type: 'drop'
+  robotId: string
+  color: string
+  count: number
+}
+
 export type CursorAction =
   | MineCursorAction
   | StopCursorAction
   | BuildCursorAction
   | AttachCursorAction
   | DetachCursorAction
+  | DropCursorAction
