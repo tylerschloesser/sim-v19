@@ -214,5 +214,24 @@ export function handleAction(
       )
       break
     }
+    case 'pickup': {
+      const robot = draft.world.robots[action.robotId]
+      invariant(robot)
+      const entity = draft.world.entities[action.entityId]
+      invariant(
+        entity?.type === entityTypeSchema.enum.Storage,
+      )
+      inventorySub(
+        entity.inventory,
+        action.color,
+        action.count,
+      )
+      inventoryAdd(
+        robot.inventory,
+        action.color,
+        action.count,
+      )
+      break
+    }
   }
 }

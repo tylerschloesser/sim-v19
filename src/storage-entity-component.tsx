@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import React from 'react'
 
 export interface StorageEntityComponentProps {
@@ -21,7 +22,11 @@ export const StorageEntityComponent = React.memo(
                   style={{
                     backgroundColor: color,
                   }}
-                  className="w-4 h-4 rounded-full"
+                  className={clsx(
+                    'w-4 h-4 rounded-full',
+                    color === 'green' &&
+                      'border border-black',
+                  )}
                 ></div>
                 <div>{count}</div>
               </React.Fragment>

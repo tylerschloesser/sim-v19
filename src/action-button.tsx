@@ -79,7 +79,9 @@ export function ActionButton({
         action && 'pointer-events-auto cursor-pointer',
         'bg-white text-black rounded-full aspect-square',
         'flex justify-center items-center',
-        type === 'primary' ? 'w-20 h-20' : 'w-16 h-16',
+        type === 'primary'
+          ? 'w-20 h-20'
+          : 'w-16 h-16 text-xs',
       )}
     >
       {label}
