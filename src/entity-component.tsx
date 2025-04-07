@@ -3,6 +3,7 @@ import React, { useContext, useRef } from 'react'
 import { takeUntil } from 'rxjs'
 import invariant from 'tiny-invariant'
 import { AppContext } from './app-context'
+import { FurnaceEntityComponent } from './furnace-entity-component'
 import { ResourceEntityComponent } from './resource-entity-component'
 import { entityTypeSchema } from './schema'
 import { useEffectWithDestroy } from './use-effect-with-destroy'
@@ -43,6 +44,10 @@ export const EntityComponent = React.memo(
         children = (
           <ResourceEntityComponent color={entity.color} />
         )
+        break
+      }
+      case entityTypeSchema.enum.Furnace: {
+        children = <FurnaceEntityComponent />
         break
       }
     }
