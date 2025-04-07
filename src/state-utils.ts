@@ -50,7 +50,7 @@ export function getSelectedRobotId(
   return null
 }
 
-export function subInventory(
+export function inventorySub(
   inventory: Record<string, number>,
   key: string,
   count: number,
@@ -62,4 +62,14 @@ export function subInventory(
   if (inventory[key] === 0) {
     delete inventory[key]
   }
+}
+
+export function inventoryHas(
+  inventory: Record<string, number>,
+  key: string,
+  count: number = 1,
+): boolean {
+  invariant(isInteger(count))
+  invariant(count > 0)
+  return (inventory[key] ?? 0) >= count
 }

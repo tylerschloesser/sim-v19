@@ -28,6 +28,7 @@ import { expandState, initState, State } from './state'
 import {
   getSelectedEntityId,
   getSelectedRobotId,
+  inventoryHas,
 } from './state-utils'
 import { tickState } from './ticker'
 import { Vec2 } from './vec2'
@@ -100,7 +101,7 @@ async function main() {
             robotId: state.attachedRobotId,
           } satisfies MineCursorAction
         } else {
-          if ((robot.inventory['red'] ?? 0) >= 5) {
+          if (inventoryHas(robot.inventory, 'red', 5)) {
             return {
               type: 'build',
               robotId: robot.id,

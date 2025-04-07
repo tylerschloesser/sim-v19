@@ -4,6 +4,7 @@ import { ZVec2 } from './vec2'
 export const entityTypeSchema = z.enum([
   'Resource',
   'Furnace',
+  'Storage',
 ])
 export type EntityType = z.infer<typeof entityTypeSchema>
 
@@ -28,9 +29,20 @@ export type FurnaceEntity = z.infer<
   typeof furnaceEntitySchema
 >
 
+export const storageEntitySchema = z.strictObject({
+  type: z.literal(entityTypeSchema.enum.Storage),
+  id: z.string(),
+  position: ZVec2,
+  inventory: z.record(z.string(), z.number()),
+})
+export type StorageEntity = z.infer<
+  typeof storageEntitySchema
+>
+
 export const entitySchema = z.discriminatedUnion('type', [
   resourceEntitySchema,
   furnaceEntitySchema,
+  storageEntitySchema,
 ])
 export type Entity = z.infer<typeof entitySchema>
 

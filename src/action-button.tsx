@@ -9,7 +9,7 @@ import {
   MineRobotTask,
   robotTaskTypeSchema,
 } from './schema'
-import { subInventory } from './state-utils'
+import { inventorySub } from './state-utils'
 
 export function ActionButton() {
   const { cursorAction$, updateState } =
@@ -48,7 +48,7 @@ export function ActionButton() {
           const robot =
             draft.world.robots[cursorAction.robotId]
           invariant(robot)
-          subInventory(robot.inventory, 'red', 5)
+          inventorySub(robot.inventory, 'red', 5)
           switch (cursorAction.entityType) {
             case entityTypeSchema.enum.Furnace: {
               const entity = {
