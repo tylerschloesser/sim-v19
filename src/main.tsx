@@ -23,12 +23,13 @@ import {
 import { GridContainer } from './grid-container'
 import './index.css'
 import { PointerController } from './pointer-controller'
+import { getRecipe } from './recipe'
 import { entityTypeSchema } from './schema'
 import { expandState, initState, State } from './state'
 import {
   getSelectedEntityId,
   getSelectedRobotId,
-  inventoryHas,
+  inventoryHasMany,
 } from './state-utils'
 import { tickState } from './ticker'
 import { Vec2 } from './vec2'
@@ -101,7 +102,12 @@ async function main() {
             robotId: state.attachedRobotId,
           } satisfies MineCursorAction
         } else {
-          if (inventoryHas(robot.inventory, 'red', 5)) {
+          if (
+            inventoryHasMany(
+              robot.inventory,
+              getRecipe(entityTypeSchema.enum.Furnace),
+            )
+          ) {
             return {
               type: 'build',
               robotId: robot.id,
@@ -109,7 +115,12 @@ async function main() {
               position: new Vec2(robot.position).floor(),
             } satisfies BuildCursorAction
           }
-          if (inventoryHas(robot.inventory, 'green', 5)) {
+          if (
+            inventoryHasMany(
+              robot.inventory,
+              getRecipe(entityTypeSchema.enum.Storage),
+            )
+          ) {
             return {
               type: 'build',
               robotId: robot.id,

@@ -64,6 +64,15 @@ export function inventorySub(
   }
 }
 
+export function inventorySubMany(
+  inventory: Record<string, number>,
+  many: Record<string, number>,
+): void {
+  for (const [key, count] of Object.entries(many)) {
+    inventorySub(inventory, key, count)
+  }
+}
+
 export function inventoryHas(
   inventory: Record<string, number>,
   key: string,
@@ -72,4 +81,16 @@ export function inventoryHas(
   invariant(isInteger(count))
   invariant(count > 0)
   return (inventory[key] ?? 0) >= count
+}
+
+export function inventoryHasMany(
+  inventory: Record<string, number>,
+  many: Record<string, number>,
+): boolean {
+  for (const [key, count] of Object.entries(many)) {
+    if (!inventoryHas(inventory, key, count)) {
+      return false
+    }
+  }
+  return true
 }

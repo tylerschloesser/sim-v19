@@ -3,13 +3,16 @@ import clsx from 'clsx'
 import { useCallback, useContext } from 'react'
 import invariant from 'tiny-invariant'
 import { AppContext } from './app-context'
+import { getRecipe } from './recipe'
 import {
+  Entity,
   entityTypeSchema,
   FurnaceEntity,
   MineRobotTask,
   robotTaskTypeSchema,
+  StorageEntity,
 } from './schema'
-import { inventorySub } from './state-utils'
+import { inventorySubMany } from './state-utils'
 
 export function ActionButton() {
   const { cursorAction$, updateState } =
@@ -48,19 +51,36 @@ export function ActionButton() {
           const robot =
             draft.world.robots[cursorAction.robotId]
           invariant(robot)
-          inventorySub(robot.inventory, 'red', 5)
+          const recipe = getRecipe(cursorAction.entityType)
+          inventorySubMany(robot.inventory, recipe)
+          let entity: Entity
+          const id = `${draft.world.nextEntityId++}`
+          const position = cursorAction.position
           switch (cursorAction.entityType) {
             case entityTypeSchema.enum.Furnace: {
-              const entity = {
-                id: `${draft.world.nextEntityId++}`,
+              entity = {
+                id,
                 type: entityTypeSchema.enum.Furnace,
-                position: cursorAction.position,
+                position,
                 input: {},
                 output: {},
               } satisfies FurnaceEntity
-              draft.world.entities[entity.id] = entity
+              break
+            }
+            case entityTypeSchema.enum.Storage: {
+              entity = {
+                id,
+                type: entityTypeSchema.enum.Storage,
+                position,
+                inventory: {},
+              } satisfies StorageEntity
+              break
+            }
+            default: {
+              invariant(false)
             }
           }
+          draft.world.entities[entity.id] = entity
         })
         break
       }
