@@ -60,6 +60,16 @@ export function getSelectedRobotId(
   return null
 }
 
+export function inventoryAdd(
+  inventory: Record<string, number>,
+  key: string,
+  count: number,
+): void {
+  invariant(isInteger(count))
+  invariant(count > 0)
+  inventory[key] = (inventory[key] ?? 0) + count
+}
+
 export function inventorySub(
   inventory: Record<string, number>,
   key: string,
@@ -183,6 +193,25 @@ export function handleAction(
         }
       }
       draft.world.entities[id] = entity
+      break
+    }
+    case 'drop': {
+      const robot = draft.world.robots[action.robotId]
+      invariant(robot)
+      const entity = draft.world.entities[action.entityId]
+      invariant(
+        entity?.type === entityTypeSchema.enum.Storage,
+      )
+      inventorySub(
+        robot.inventory,
+        action.color,
+        action.count,
+      )
+      inventoryAdd(
+        entity.inventory,
+        action.color,
+        action.count,
+      )
       break
     }
   }

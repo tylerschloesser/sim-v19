@@ -90,6 +90,7 @@ export function initActions(
                 invariant(count)
                 actions.push({
                   type: 'drop',
+                  entityId: selectedEntityId,
                   robotId: state.attachedRobotId,
                   color,
                   count,

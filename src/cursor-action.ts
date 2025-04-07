@@ -30,6 +30,7 @@ export interface DetachCursorAction {
 
 export interface DropCursorAction {
   type: 'drop'
+  entityId: string
   robotId: string
   color: string
   count: number
