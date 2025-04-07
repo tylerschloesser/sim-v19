@@ -4,9 +4,12 @@ import { useCallback, useContext } from 'react'
 import invariant from 'tiny-invariant'
 import { AppContext } from './app-context'
 import {
+  entityTypeSchema,
+  FurnaceEntity,
   MineRobotTask,
   robotTaskTypeSchema,
 } from './schema'
+import { subInventory } from './state-utils'
 
 export function ActionButton() {
   const { cursorAction$, updateState } =
@@ -37,6 +40,27 @@ export function ActionButton() {
             draft.world.robots[cursorAction.robotId]
           invariant(robot)
           robot.task = null
+        })
+        break
+      }
+      case 'build': {
+        updateState((draft) => {
+          const robot =
+            draft.world.robots[cursorAction.robotId]
+          invariant(robot)
+          subInventory(robot.inventory, 'red', 5)
+          switch (cursorAction.entityType) {
+            case entityTypeSchema.enum.Furnace: {
+              const entity = {
+                id: `${draft.world.nextEntityId++}`,
+                type: entityTypeSchema.enum.Furnace,
+                position: cursorAction.position,
+                input: {},
+                output: {},
+              } satisfies FurnaceEntity
+              draft.world.entities[entity.id] = entity
+            }
+          }
         })
         break
       }

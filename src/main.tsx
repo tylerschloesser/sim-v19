@@ -103,6 +103,7 @@ async function main() {
           if ((robot.inventory['red'] ?? 0) >= 5) {
             return {
               type: 'build',
+              robotId: robot.id,
               entityType: entityTypeSchema.enum.Furnace,
               position: new Vec2(robot.position).floor(),
             } satisfies BuildCursorAction

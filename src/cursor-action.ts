@@ -16,6 +16,7 @@ export interface StopCursorAction {
 
 export interface BuildCursorAction {
   type: 'build'
+  robotId: string
   entityType: EntityType
   position: Vec2
 }

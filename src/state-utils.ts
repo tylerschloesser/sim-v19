@@ -1,3 +1,5 @@
+import { isInteger } from 'lodash-es'
+import invariant from 'tiny-invariant'
 import { State } from './state'
 import { Vec2 } from './vec2'
 
@@ -46,4 +48,18 @@ export function getSelectedRobotId(
   }
 
   return null
+}
+
+export function subInventory(
+  inventory: Record<string, number>,
+  key: string,
+  count: number,
+): void {
+  invariant(isInteger(count))
+  invariant(count > 0)
+  invariant(inventory[key] ?? 0 >= count)
+  inventory[key]! -= count
+  if (inventory[key] === 0) {
+    delete inventory[key]
+  }
 }
