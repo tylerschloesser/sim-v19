@@ -6,6 +6,7 @@ import { AppContext } from './app-context'
 import { FurnaceEntityComponent } from './furnace-entity-component'
 import { ResourceEntityComponent } from './resource-entity-component'
 import { entityTypeSchema } from './schema'
+import { StorageEntityComponent } from './storage-entity-component'
 import { useEffectWithDestroy } from './use-effect-with-destroy'
 import { Vec2 } from './vec2'
 
@@ -49,6 +50,13 @@ export const EntityComponent = React.memo(
       case entityTypeSchema.enum.Furnace: {
         children = <FurnaceEntityComponent />
         break
+      }
+      case entityTypeSchema.enum.Storage: {
+        children = <StorageEntityComponent />
+        break
+      }
+      default: {
+        invariant(false, 'TODO')
       }
     }
 
